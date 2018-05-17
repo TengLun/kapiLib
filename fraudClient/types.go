@@ -97,11 +97,19 @@ var fraudEndpointMap = map[string]string{
 	"ttiOutlier":                  "ttioutlier",
 }
 
-/*
-  client.Account.List.Apps()
-  account.list.Networks()
-  account.Data.Apps()
-  account.Data.Networks()
-  account.Data.SiteIDs()
-  account.Data.Trackers()
-*/
+// KFResponse is a generic response struct
+type KFResponse struct {
+	MetaData struct {
+		Headers []string `json:"headers"`
+	} `json:"metaData"`
+	Data []struct {
+		AppName         string `json:"appName,omitempty"`
+		AppID           string `json:"appId,omitempty"`
+		NetworkName     string `json:"networkName,omitempty"`
+		NetworkID       string `json:"networkId,omitempty"`
+		ClickCt         int    `json:"clickCt,omitempty"`
+		SameAcctClickCt int    `json:"sameAcctClickCt,omitempty"`
+		DiffAcctClickCt int    `json:"diffAcctClickCt,omitempty"`
+		InstallCt       int    `json:"installCt,omitempty"`
+	} `json:"data"`
+}

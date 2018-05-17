@@ -6,79 +6,74 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"time"
 )
 
 // Response struct
-type response struct {
+type blacklistResponse struct {
 	Status string `json:"status"`
 }
 
-// SendList sends a blackList to Kochava
-func SendList(logger *log.Logger, list BlackList, api string, debug bool, action string) error {
+// SiteIDs adds siteids to the account blacklist
+func (a Add) SiteIDs(sites ...siteID) error {
 
-	for i := range list.BlackListDevices {
-
-		reqBody, err := json.Marshal(list.BlackListDevices[i])
+	for i := range sites {
+		reqBody, err := json.Marshal(sites[i])
 		if err != nil {
-			logger.Println(err)
 			return err
 		}
-		if debug == false {
-			err = send(logger, reqBody, api, action)
+		if a.debug == false {
+			err = send(reqBody, a.APIKey, "add")
 			if err != nil {
-				logger.Println(err)
 				return err
 			}
 		} else {
-			logger.Printf("DEBUG: %#v\n", reqBody)
-		}
-	}
-
-	for i := range list.BlackListSiteIDs {
-
-		reqBody, err := json.Marshal(list.BlackListSiteIDs[i])
-		if err != nil {
-			logger.Println(err)
-			return err
-		}
-		if debug == false {
-			err = send(logger, reqBody, api, action)
-			if err != nil {
-				logger.Println(err)
-				return err
-			}
-		} else {
-			logger.Printf("DEBUG: %#v\n", reqBody)
-		}
-
-	}
-
-	for i := range list.BlackListIPs {
-
-		reqBody, err := json.Marshal(list.BlackListIPs[i])
-		if err != nil {
-			logger.Println(err)
-			return err
-		}
-
-		if debug == false {
-			err = send(logger, reqBody, api, action)
-			if err != nil {
-				logger.Println(err)
-				return err
-			}
-		} else {
-			logger.Printf("DEBUG: %#v\n", reqBody)
+			return nil
 		}
 	}
 	return nil
-
 }
 
-func send(logger *log.Logger, reqBody []byte, api string, action string) error {
+// DeviceIDs adds device ids to the account blacklist
+func (a Add) DeviceIDs(devices ...deviceID) error {
+	for i := range devices {
+		reqBody, err := json.Marshal(devices[i])
+		if err != nil {
+			return err
+		}
+		if a.debug == false {
+			err = send(reqBody, a.APIKey, "add")
+			if err != nil {
+				return err
+			}
+		} else {
+			return nil
+		}
+	}
+	return nil
+}
+
+// IPAddresses adds ips to the account blacklist
+func (a Add) IPAddresses(ips ...ipAddress) error {
+	for i := range ips {
+		reqBody, err := json.Marshal(ips[i])
+		if err != nil {
+			return err
+		}
+		if a.debug == false {
+			err = send(reqBody, a.APIKey, "add")
+			if err != nil {
+				return err
+			}
+		} else {
+			return nil
+		}
+	}
+	return nil
+}
+
+func send(reqBody []byte, api string, action string) error {
 
 	// Slow it down so it doesn't hit the API too quickly
 	time.Sleep(50 * time.Millisecond)
@@ -96,7 +91,7 @@ func send(logger *log.Logger, reqBody []byte, api string, action string) error {
 		endpoint = "https://fraud.api.kochava.com/fraud/blacklist/remove"
 	default:
 		err := fmt.Errorf("switch case for action in send() should never reach default; action %s invalid", action)
-		logger.Println(err)
+
 		return err
 	}
 
@@ -104,7 +99,7 @@ func send(logger *log.Logger, reqBody []byte, api string, action string) error {
 
 	req, err := http.NewRequest(method, endpoint, bytes.NewBuffer(reqBody))
 	if err != nil {
-		logger.Println(err)
+
 		return err
 	}
 
@@ -113,35 +108,39 @@ func send(logger *log.Logger, reqBody []byte, api string, action string) error {
 	client := &http.Client{}
 	res, err := client.Do(req)
 	if err != nil {
-		logger.Println(err)
+
 		return err
 	}
 
 	body, _ := ioutil.ReadAll(res.Body)
-	var status response
+	var status blacklistResponse
 	err = json.Unmarshal(body, &status)
 	if err != nil {
-		logger.Println(err)
+
 		return err
 	}
 
 	switch res.StatusCode {
 	case 404:
-		logger.Println(status.Status)
+
 		return errors.New(status.Status)
 	case 403:
-		if action == "addupdate" {
-			send(logger, reqBody, api, "update")
-			logger.Println("entry already found; updating instead")
-			return nil
-		}
-		logger.Println(status.Status)
+		// if action == "addupdate" {
+		// 	send(logger, reqBody, api, "update")
+		// 	logger.Println("entry already found; updating instead")
+		// 	return nil
+		// }
+
 		return errors.New(status.Status)
 	case 200:
 		return nil
 	default:
-		logger.Println(status.Status)
+
 		return errors.New(status.Status)
 	}
+
+}
+
+func SiteIDS() []siteID {
 
 }

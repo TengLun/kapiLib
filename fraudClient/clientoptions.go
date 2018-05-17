@@ -18,6 +18,11 @@ func SetHTTPClient(httpClient *http.Client) func(*Client) error {
 func SetDebugTrue() func(*Client) error {
 	return func(client *Client) error {
 		client.debug = true
+		client.Add.debug = true
+		client.Remove.debug = true
+		client.Update.debug = true
+		client.List.debug = true
+		client.Data.debug = true
 		return nil
 	}
 }

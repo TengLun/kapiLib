@@ -10,8 +10,11 @@ import (
 
 // Client is the base struct that allows for access to all of the API methods
 type Client struct {
-	List List
-	Data Data
+	List   List
+	Data   Data
+	Add    Add
+	Update Update
+	Remove Remove
 
 	debug bool
 }
@@ -26,6 +29,8 @@ type List struct {
 
 	BaseURL    string
 	httpClient *http.Client
+
+	debug bool
 }
 
 // Data is a struct contained in the client that allows access to all of the Data
@@ -38,6 +43,47 @@ type Data struct {
 
 	BaseURL    string
 	httpClient *http.Client
+
+	debug bool
+}
+
+// Update is a struct allowing for updating entries in the Account Blacklist
+type Update struct {
+	AccountID string
+	Format    string
+	View      string
+	APIKey    string
+
+	BaseURL    string
+	httpClient *http.Client
+
+	debug bool
+}
+
+// Remove is a struct allowing for the removal of entries in the account blacklist
+type Remove struct {
+	AccountID string
+	Format    string
+	View      string
+	APIKey    string
+
+	BaseURL    string
+	httpClient *http.Client
+
+	debug bool
+}
+
+// Add is a struct allowing for the addition of entries to the account blacklist
+type Add struct {
+	AccountID string
+	Format    string
+	View      string
+	APIKey    string
+
+	BaseURL    string
+	httpClient *http.Client
+
+	debug bool
 }
 
 // CreateClient creates a client with the necessary information to access the
@@ -70,6 +116,16 @@ func CreateClient(apiKey string, accountID string, options ...func(*Client)) (*C
 
 	for _, option := range options {
 		option(&client)
+	}
+
+	if client.List.httpClient == nil {
+		client.List.httpClient = &http.Client{}
+		client.Data.httpClient = &http.Client{}
+	}
+
+	if client.List.BaseURL == "" {
+		client.List.BaseURL = "https://fraud.api.kochava.com:8320/"
+		client.Data.BaseURL = "https://fraud.api.kochava.com:8320/"
 	}
 
 	return &client, nil
@@ -112,7 +168,7 @@ func getView(apiKey string) (string, error) {
 // Apps lists apps with fraudulent data
 func (l List) Apps(fraudType string, startDate, endDate time.Time, filters ...filter) (interface{}, error) {
 
-	endpoint := l.BaseURL + fraudEndpointMap[fraudType] + `/list/apps`
+	endpoint := l.BaseURL + "fraud/" + "fraud/" + fraudEndpointMap[fraudType] + `/list/apps`
 
 	return sendRequest(l.AccountID, l.View, startDate.Format("2006-1-2"), endDate.Format("2006-1-2"), "json", fraudType, endpoint, l.APIKey, filters)
 
@@ -121,7 +177,7 @@ func (l List) Apps(fraudType string, startDate, endDate time.Time, filters ...fi
 // Networks lists networks with fraudulent data
 func (l List) Networks(fraudType string, startDate time.Time, endDate time.Time, filters ...filter) (interface{}, error) {
 
-	endpoint := l.BaseURL + fraudEndpointMap[fraudType] + `/list/networks`
+	endpoint := l.BaseURL + "fraud/" + fraudEndpointMap[fraudType] + `/list/networks`
 
 	return sendRequest(l.AccountID, l.View, startDate.Format("2006-1-2"), endDate.Format("2006-1-2"), "json", fraudType, endpoint, l.APIKey, filters)
 
@@ -130,7 +186,7 @@ func (l List) Networks(fraudType string, startDate time.Time, endDate time.Time,
 // Accounts lists Accounts with fraudulent data
 func (l List) Accounts(fraudType string, startDate time.Time, endDate time.Time, filters ...filter) (interface{}, error) {
 
-	endpoint := l.BaseURL + fraudEndpointMap[fraudType] + `/list/accounts`
+	endpoint := l.BaseURL + "fraud/" + fraudEndpointMap[fraudType] + `/list/accounts`
 
 	return sendRequest(l.AccountID, l.View, startDate.Format("2006-1-2"), endDate.Format("2006-1-2"), "json", fraudType, endpoint, l.APIKey, filters)
 
@@ -139,7 +195,7 @@ func (l List) Accounts(fraudType string, startDate time.Time, endDate time.Time,
 // Accounts returns data from accounts with fraudulent data
 func (d Data) Accounts(fraudType string, startDate time.Time, endDate time.Time, filters ...filter) (interface{}, error) {
 
-	endpoint := d.BaseURL + fraudEndpointMap[fraudType] + `/data`
+	endpoint := d.BaseURL + "fraud/" + fraudEndpointMap[fraudType] + `/data`
 
 	return sendRequest(d.AccountID, d.View, startDate.Format("2006-1-2"), endDate.Format("2006-1-2"), "json", fraudType, endpoint, d.APIKey, filters)
 
@@ -148,7 +204,7 @@ func (d Data) Accounts(fraudType string, startDate time.Time, endDate time.Time,
 // Apps returns data from apps with fraudulent data
 func (d Data) Apps(fraudType string, startDate time.Time, endDate time.Time, filters ...filter) (interface{}, error) {
 
-	endpoint := d.BaseURL + fraudEndpointMap[fraudType] + `/app/data`
+	endpoint := d.BaseURL + "fraud/" + fraudEndpointMap[fraudType] + `/app/data`
 
 	return sendRequest(d.AccountID, d.View, startDate.Format("2006-1-2"), endDate.Format("2006-1-2"), "json", fraudType, endpoint, d.APIKey, filters)
 
@@ -157,7 +213,7 @@ func (d Data) Apps(fraudType string, startDate time.Time, endDate time.Time, fil
 // SiteIds returns data from siteIds with fraudulent data
 func (d Data) SiteIds(fraudType string, startDate time.Time, endDate time.Time, filters ...filter) (interface{}, error) {
 
-	endpoint := d.BaseURL + fraudEndpointMap[fraudType] + `/siteid/data`
+	endpoint := d.BaseURL + "fraud/" + fraudEndpointMap[fraudType] + `/siteid/data`
 
 	return sendRequest(d.AccountID, d.View, startDate.Format("2006-1-2"), endDate.Format("2006-1-2"), "json", fraudType, endpoint, d.APIKey, filters)
 
@@ -166,7 +222,7 @@ func (d Data) SiteIds(fraudType string, startDate time.Time, endDate time.Time, 
 // Trackers returns data from trackers with fraudulent data
 func (d Data) Trackers(fraudType string, startDate time.Time, endDate time.Time, filters ...filter) (interface{}, error) {
 
-	endpoint := d.BaseURL + fraudEndpointMap[fraudType] + `/tracker/data`
+	endpoint := d.BaseURL + "fraud/" + fraudEndpointMap[fraudType] + `/tracker/data`
 
 	return sendRequest(d.AccountID, d.View, startDate.Format("2006-1-2"), endDate.Format("2006-1-2"), "json", fraudType, endpoint, d.APIKey, filters)
 
@@ -175,25 +231,8 @@ func (d Data) Trackers(fraudType string, startDate time.Time, endDate time.Time,
 // Networks returns data from networks with fraudulent data
 func (d Data) Networks(fraudType string, startDate time.Time, endDate time.Time, filters ...filter) (interface{}, error) {
 
-	endpoint := d.BaseURL + fraudEndpointMap[fraudType] + `/network/data`
+	endpoint := d.BaseURL + "fraud/" + fraudEndpointMap[fraudType] + `/network/data`
 
 	return sendRequest(d.AccountID, d.View, startDate.Format("2006-1-2"), endDate.Format("2006-1-2"), "json", fraudType, endpoint, d.APIKey, filters)
 
-}
-
-// KFResponse is a generic response struct
-type KFResponse struct {
-	MetaData struct {
-		Headers []string `json:"headers"`
-	} `json:"metaData"`
-	Data []struct {
-		AppName         string `json:"appName,omitempty"`
-		AppID           string `json:"appId,omitempty"`
-		NetworkName     string `json:"networkName,omitempty"`
-		NetworkID       string `json:"networkId,omitempty"`
-		ClickCt         int    `json:"clickCt,omitempty"`
-		SameAcctClickCt int    `json:"sameAcctClickCt,omitempty"`
-		DiffAcctClickCt int    `json:"diffAcctClickCt,omitempty"`
-		InstallCt       int    `json:"installCt,omitempty"`
-	} `json:"data"`
 }
