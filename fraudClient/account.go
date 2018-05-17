@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"net/url"
 	"time"
 )
 
@@ -12,6 +13,9 @@ import (
 type Client struct {
 	List List
 	Data Data
+
+	BaseURL    *url.URL
+	httpClient *http.Client
 }
 
 // List is a struct contained in Client that allows access to all of the API List
@@ -95,7 +99,7 @@ func getView(apiKey string) (string, error) {
 
 }
 
-// Apps returns data using the
+// Apps lists apps with fraudulent data
 func (l List) Apps(fraudType string, startDate, endDate time.Time, filters ...filter) (interface{}, error) {
 
 	endpoint := `https://fraud.api.kochava.com:8320/fraud/` + fraudEndpointMap[fraudType] + `/list/apps`
@@ -104,6 +108,7 @@ func (l List) Apps(fraudType string, startDate, endDate time.Time, filters ...fi
 
 }
 
+// Networks lists networks with fraudulent data
 func (l List) Networks(fraudType string, startDate time.Time, endDate time.Time, filters ...filter) (interface{}, error) {
 
 	endpoint := `https://fraud.api.kochava.com:8320/fraud/` + fraudEndpointMap[fraudType] + `/list/networks`
@@ -112,6 +117,7 @@ func (l List) Networks(fraudType string, startDate time.Time, endDate time.Time,
 
 }
 
+// Accounts lists Accounts with fraudulent data
 func (l List) Accounts(fraudType string, startDate time.Time, endDate time.Time, filters ...filter) (interface{}, error) {
 
 	endpoint := `https://fraud.api.kochava.com:8320/fraud/` + fraudEndpointMap[fraudType] + `/list/accounts`
@@ -120,6 +126,7 @@ func (l List) Accounts(fraudType string, startDate time.Time, endDate time.Time,
 
 }
 
+// Accounts returns data from accounts with fraudulent data
 func (g Data) Accounts(fraudType string, startDate time.Time, endDate time.Time, filters ...filter) (interface{}, error) {
 
 	endpoint := `https://fraud.api.kochava.com:8320/fraud/` + fraudEndpointMap[fraudType] + `/data`
@@ -128,6 +135,7 @@ func (g Data) Accounts(fraudType string, startDate time.Time, endDate time.Time,
 
 }
 
+// Apps returns data from apps with fraudulent data
 func (g Data) Apps(fraudType string, startDate time.Time, endDate time.Time, filters ...filter) (interface{}, error) {
 
 	endpoint := `https://fraud.api.kochava.com:8320/fraud/` + fraudEndpointMap[fraudType] + `/app/data`
@@ -136,6 +144,7 @@ func (g Data) Apps(fraudType string, startDate time.Time, endDate time.Time, fil
 
 }
 
+// SiteIds returns data from siteIds with fraudulent data
 func (g Data) SiteIds(fraudType string, startDate time.Time, endDate time.Time, filters ...filter) (interface{}, error) {
 
 	endpoint := `https://fraud.api.kochava.com:8320/fraud/` + fraudEndpointMap[fraudType] + `/siteid/data`
@@ -144,6 +153,7 @@ func (g Data) SiteIds(fraudType string, startDate time.Time, endDate time.Time, 
 
 }
 
+// Trackers returns data from trackers with fraudulent data
 func (g Data) Trackers(fraudType string, startDate time.Time, endDate time.Time, filters ...filter) (interface{}, error) {
 
 	endpoint := `https://fraud.api.kochava.com:8320/fraud/` + fraudEndpointMap[fraudType] + `/tracker/data`
@@ -152,6 +162,7 @@ func (g Data) Trackers(fraudType string, startDate time.Time, endDate time.Time,
 
 }
 
+// Networks returns data from networks with fraudulent data
 func (g Data) Networks(fraudType string, startDate time.Time, endDate time.Time, filters ...filter) (interface{}, error) {
 
 	endpoint := `https://fraud.api.kochava.com:8320/fraud/` + fraudEndpointMap[fraudType] + `/network/data`
@@ -160,6 +171,7 @@ func (g Data) Networks(fraudType string, startDate time.Time, endDate time.Time,
 
 }
 
+// KFResponse is a generic response struct
 type KFResponse struct {
 	MetaData struct {
 		Headers []string `json:"headers"`

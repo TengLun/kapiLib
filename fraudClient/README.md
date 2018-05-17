@@ -2,7 +2,7 @@
 
 This is a privately created library to aid in using the Fraud Identification API.
 
-Note that this library is not officially endorsed. 
+Note that this library is not officially endorsed.
 This is simply my library to help me interact with their API, described here:
 
 https://support.kochava.com/analytics-reports-api/fraud-api
@@ -28,7 +28,7 @@ client, err := kfapi.GetAccount("my_api_key", "my_accound_id")
 
 ## Retrieve Data
 
-Once the account has been initialized, data can be returned using the "List" endpoint, or the "GatherDataFrom" endpoint. 
+Once the account has been initialized, data can be returned using the "List" endpoint, or the "GatherDataFrom" endpoint.
 
 ```golang
 response, err := client.List.Apps("fraud type",start time, end time)
@@ -44,9 +44,17 @@ Example for Gather Endpoint:
 response, err := client.GatherDataFrom.Networks(kfapi.AdStacking, time.Unix(1510000000,0), time.Now())
 ```
 
+### Filters
+
+Filters can be added to modify the data returned. Filters can be passed using the Filter() function
+as follows:
+```golang
+response, err := client.Data.Networks(kfapi.Adstacking, time.Unix(1510000000,0), time.Now(),Filter(Dimension_NetworkId,Modifier_In,"1344","2522","133","6352"),Filter(Dimension_AppId,Modifier_NotIn,"5667"))
+```
+
 ## Response
 
-All of the responses will be in an exported struct format called KFResponse. This format is being used to both unify the response 
+All of the responses will be in an exported struct format called KFResponse. This format is being used to both unify the response
 structure from the various calls, as well as to allow an easier "turnaround", sending data back to the API to add or remove from the blacklist.
 
 # Constants
@@ -65,9 +73,7 @@ etc.
 
 # Improvements Coming Soon
 
-Currently, functionality is being worked on that will allow the return to be ported directly back to the API to add suspicious actors to the 
+Currently, functionality is being worked on that will allow the return to be ported directly back to the API to add suspicious actors to the
 blacklist, after some threshold has been applied.
 
 Stay tuned for more developments.
-
-
