@@ -60,6 +60,7 @@ type request struct {
 	Filters   []filter `json:"filters,omitempty"`
 }
 
+// Filter object for modifying requests
 type filter struct {
 	Dimension string   `json:"dimension"`
 	Values    []string `json:"values"`

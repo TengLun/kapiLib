@@ -26,6 +26,19 @@ as a marketer or network (which changes the calls).
 client, err := kfapi.GetAccount("my_api_key", "my_accound_id")
 ```
 
+### Client Options
+Client Options can be passed in as functional options when the client is created. Stock functions are:
+```golang
+// SetDebugTrue turns debug logic on; client returns spoof data instead of real data for testing
+SetDebugTrue()
+
+// SetHttpClient allows a custom http client to be utilized
+SetHTTPClient(httpClient *http.Client)
+
+// SetBaseURL allows a custom domain to be hit instead of the proper domain
+SetBaseURL(baseURL string)
+```
+
 ## Retrieve Data
 
 Once the account has been initialized, data can be returned using the "List" endpoint, or the "GatherDataFrom" endpoint.
@@ -49,7 +62,7 @@ response, err := client.GatherDataFrom.Networks(kfapi.AdStacking, time.Unix(1510
 Filters can be added to modify the data returned. Filters can be passed using the Filter() function
 as follows:
 ```golang
-response, err := client.Data.Networks(kfapi.Adstacking, time.Unix(1510000000,0), time.Now(),Filter(Dimension_NetworkId,Modifier_In,"1344","2522","133","6352"),Filter(Dimension_AppId,Modifier_NotIn,"5667"))
+response, err := client.Data.Networks(kfapi.Adstacking, time.Unix(1510000000,0), time.Now(),Filter(NetworkId,In,"1344","2522","133","6352"),Filter(AppId,In,"5667"))
 ```
 
 ## Response

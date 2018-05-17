@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
-	"net/url"
 	"time"
 )
 
@@ -14,8 +13,7 @@ type Client struct {
 	List List
 	Data Data
 
-	BaseURL    *url.URL
-	httpClient *http.Client
+	debug bool
 }
 
 // List is a struct contained in Client that allows access to all of the API List
@@ -25,6 +23,9 @@ type List struct {
 	Format    string
 	View      string
 	APIKey    string
+
+	BaseURL    string
+	httpClient *http.Client
 }
 
 // Data is a struct contained in the client that allows access to all of the Data
@@ -34,11 +35,14 @@ type Data struct {
 	Format    string
 	View      string
 	APIKey    string
+
+	BaseURL    string
+	httpClient *http.Client
 }
 
 // CreateClient creates a client with the necessary information to access the
 // methods
-func CreateClient(apiKey string, accountID string) (*Client, error) {
+func CreateClient(apiKey string, accountID string, options ...func(*Client)) (*Client, error) {
 
 	var client Client
 
@@ -57,10 +61,16 @@ func CreateClient(apiKey string, accountID string) (*Client, error) {
 	client.List.AccountID = accountID
 	client.List.APIKey = apiKey
 	client.List.View = view
+	client.List.BaseURL = `https://fraud.api.kochava.com:8320/fraud/`
 
 	client.Data.AccountID = accountID
 	client.Data.APIKey = apiKey
 	client.Data.View = view
+	client.Data.BaseURL = `https://fraud.api.kochava.com:8320/fraud/`
+
+	for _, option := range options {
+		option(&client)
+	}
 
 	return &client, nil
 }
@@ -102,7 +112,7 @@ func getView(apiKey string) (string, error) {
 // Apps lists apps with fraudulent data
 func (l List) Apps(fraudType string, startDate, endDate time.Time, filters ...filter) (interface{}, error) {
 
-	endpoint := `https://fraud.api.kochava.com:8320/fraud/` + fraudEndpointMap[fraudType] + `/list/apps`
+	endpoint := l.BaseURL + fraudEndpointMap[fraudType] + `/list/apps`
 
 	return sendRequest(l.AccountID, l.View, startDate.Format("2006-1-2"), endDate.Format("2006-1-2"), "json", fraudType, endpoint, l.APIKey, filters)
 
@@ -111,7 +121,7 @@ func (l List) Apps(fraudType string, startDate, endDate time.Time, filters ...fi
 // Networks lists networks with fraudulent data
 func (l List) Networks(fraudType string, startDate time.Time, endDate time.Time, filters ...filter) (interface{}, error) {
 
-	endpoint := `https://fraud.api.kochava.com:8320/fraud/` + fraudEndpointMap[fraudType] + `/list/networks`
+	endpoint := l.BaseURL + fraudEndpointMap[fraudType] + `/list/networks`
 
 	return sendRequest(l.AccountID, l.View, startDate.Format("2006-1-2"), endDate.Format("2006-1-2"), "json", fraudType, endpoint, l.APIKey, filters)
 
@@ -120,54 +130,54 @@ func (l List) Networks(fraudType string, startDate time.Time, endDate time.Time,
 // Accounts lists Accounts with fraudulent data
 func (l List) Accounts(fraudType string, startDate time.Time, endDate time.Time, filters ...filter) (interface{}, error) {
 
-	endpoint := `https://fraud.api.kochava.com:8320/fraud/` + fraudEndpointMap[fraudType] + `/list/accounts`
+	endpoint := l.BaseURL + fraudEndpointMap[fraudType] + `/list/accounts`
 
 	return sendRequest(l.AccountID, l.View, startDate.Format("2006-1-2"), endDate.Format("2006-1-2"), "json", fraudType, endpoint, l.APIKey, filters)
 
 }
 
 // Accounts returns data from accounts with fraudulent data
-func (g Data) Accounts(fraudType string, startDate time.Time, endDate time.Time, filters ...filter) (interface{}, error) {
+func (d Data) Accounts(fraudType string, startDate time.Time, endDate time.Time, filters ...filter) (interface{}, error) {
 
-	endpoint := `https://fraud.api.kochava.com:8320/fraud/` + fraudEndpointMap[fraudType] + `/data`
+	endpoint := d.BaseURL + fraudEndpointMap[fraudType] + `/data`
 
-	return sendRequest(g.AccountID, g.View, startDate.Format("2006-1-2"), endDate.Format("2006-1-2"), "json", fraudType, endpoint, g.APIKey, filters)
+	return sendRequest(d.AccountID, d.View, startDate.Format("2006-1-2"), endDate.Format("2006-1-2"), "json", fraudType, endpoint, d.APIKey, filters)
 
 }
 
 // Apps returns data from apps with fraudulent data
-func (g Data) Apps(fraudType string, startDate time.Time, endDate time.Time, filters ...filter) (interface{}, error) {
+func (d Data) Apps(fraudType string, startDate time.Time, endDate time.Time, filters ...filter) (interface{}, error) {
 
-	endpoint := `https://fraud.api.kochava.com:8320/fraud/` + fraudEndpointMap[fraudType] + `/app/data`
+	endpoint := d.BaseURL + fraudEndpointMap[fraudType] + `/app/data`
 
-	return sendRequest(g.AccountID, g.View, startDate.Format("2006-1-2"), endDate.Format("2006-1-2"), "json", fraudType, endpoint, g.APIKey, filters)
+	return sendRequest(d.AccountID, d.View, startDate.Format("2006-1-2"), endDate.Format("2006-1-2"), "json", fraudType, endpoint, d.APIKey, filters)
 
 }
 
 // SiteIds returns data from siteIds with fraudulent data
-func (g Data) SiteIds(fraudType string, startDate time.Time, endDate time.Time, filters ...filter) (interface{}, error) {
+func (d Data) SiteIds(fraudType string, startDate time.Time, endDate time.Time, filters ...filter) (interface{}, error) {
 
-	endpoint := `https://fraud.api.kochava.com:8320/fraud/` + fraudEndpointMap[fraudType] + `/siteid/data`
+	endpoint := d.BaseURL + fraudEndpointMap[fraudType] + `/siteid/data`
 
-	return sendRequest(g.AccountID, g.View, startDate.Format("2006-1-2"), endDate.Format("2006-1-2"), "json", fraudType, endpoint, g.APIKey, filters)
+	return sendRequest(d.AccountID, d.View, startDate.Format("2006-1-2"), endDate.Format("2006-1-2"), "json", fraudType, endpoint, d.APIKey, filters)
 
 }
 
 // Trackers returns data from trackers with fraudulent data
-func (g Data) Trackers(fraudType string, startDate time.Time, endDate time.Time, filters ...filter) (interface{}, error) {
+func (d Data) Trackers(fraudType string, startDate time.Time, endDate time.Time, filters ...filter) (interface{}, error) {
 
-	endpoint := `https://fraud.api.kochava.com:8320/fraud/` + fraudEndpointMap[fraudType] + `/tracker/data`
+	endpoint := d.BaseURL + fraudEndpointMap[fraudType] + `/tracker/data`
 
-	return sendRequest(g.AccountID, g.View, startDate.Format("2006-1-2"), endDate.Format("2006-1-2"), "json", fraudType, endpoint, g.APIKey, filters)
+	return sendRequest(d.AccountID, d.View, startDate.Format("2006-1-2"), endDate.Format("2006-1-2"), "json", fraudType, endpoint, d.APIKey, filters)
 
 }
 
 // Networks returns data from networks with fraudulent data
-func (g Data) Networks(fraudType string, startDate time.Time, endDate time.Time, filters ...filter) (interface{}, error) {
+func (d Data) Networks(fraudType string, startDate time.Time, endDate time.Time, filters ...filter) (interface{}, error) {
 
-	endpoint := `https://fraud.api.kochava.com:8320/fraud/` + fraudEndpointMap[fraudType] + `/network/data`
+	endpoint := d.BaseURL + fraudEndpointMap[fraudType] + `/network/data`
 
-	return sendRequest(g.AccountID, g.View, startDate.Format("2006-1-2"), endDate.Format("2006-1-2"), "json", fraudType, endpoint, g.APIKey, filters)
+	return sendRequest(d.AccountID, d.View, startDate.Format("2006-1-2"), endDate.Format("2006-1-2"), "json", fraudType, endpoint, d.APIKey, filters)
 
 }
 
