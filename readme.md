@@ -1,4 +1,4 @@
-# KapiLibn (WIP)
+# KapiLib (WIP)
 This project contains clients for all of Kochava's public APIs. The four
 APIs are explained in brief below:
 
