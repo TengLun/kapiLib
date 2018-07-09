@@ -2,19 +2,20 @@
 This project contains clients for all of Kochava's public APIs. The four
 APIs are explained in brief below:
 
-## CampaignClient
-#### Status: Complete, QA Incomplete
+
+## Status: Complete, QA Incomplete
+
+### CampaignClient
 Campaign creation and management.
 
-## FraudClient
-#### Status: Complete, QA Incomplete
+### FraudClient
 Fraud Console information access and programmatic additions and removals from
 the account blacklist.
 
-## ReportsClient
-#### Status: Incomplete
+## Status: Incomplete
+
+### ReportsClient
 Pull reports programmatically.
 
-## S2SClient
-#### Status: Incomplete
+### S2SClient
 Send user-engagement information to Kochava from a server.
