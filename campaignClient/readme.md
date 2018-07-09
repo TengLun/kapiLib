@@ -1,6 +1,6 @@
 # Library for the Campaign Management API
 
-[![GoDoc](https://godoc.org/github.com/TengLun/kapiLib/campaignClient?status.svg)](https://godoc.org/github.com/markwunsch/snapchat-ads-sdk/snapchat)
+[![GoDoc](https://godoc.org/github.com/TengLun/kapiLib/campaignClient?status.svg)](https://godoc.org/github.com/TengLun/kapiLib/campaignClient)
 
 
 This is a privately created library for the Kochava Campaign Management API.
