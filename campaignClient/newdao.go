@@ -19,7 +19,7 @@ func CreateClient(a AccountAccessor, options ...func(a *APIA) error) (APIAccesso
 	}
 
 	if dao.debug == true {
-		var apiaFake APIA_Fake
+		var apiaFake aPIA_Fake
 		return apiaFake, nil
 	}
 
