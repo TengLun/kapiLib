@@ -5,8 +5,6 @@
 
 This is a privately created library for the Kochava Campaign Management API.
 
-Note that this library is not officially endorsed.
-This is simply my library to help me interact with their API, described here:
 
 https://support.kochava.com/analytics-reports-api/premium-publisher-api-campaign-management
 
