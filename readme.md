@@ -1,4 +1,7 @@
 # KapiLib (WIP)
+
+[![Go Report Card](https://goreportcard.com/badge/github.com/TengLun/kapiLib)](https://goreportcard.com/report/github.com/TengLun/kapiLib)
+
 This project contains clients for all of Kochava's public APIs. The four
 APIs are explained in brief below:
 
