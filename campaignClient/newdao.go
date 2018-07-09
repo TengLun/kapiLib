@@ -2,15 +2,23 @@ package campaignclient
 
 import "net/http"
 
+// AccountAccessor defines the account information
 type AccountAccessor struct {
 	AppID   string
 	AuthKey string
 }
 
-// CreateaPIA returns an accessor object. If debug flag is true, a aPIA_Fake is
-// returned for debugging purposes. Otherwise, an aPIA struct is returned
-func CreateClient(debug bool, a AccountAccessor) (aPIAccessor, error) {
-	if debug == true {
+// CreateClient returns an accessor object. If debug flag is true, a aPIA_Fake is
+// returned for debugging purposes. Otherwise, an aPIA struct is returned. Options
+// are passed using functional options.
+func CreateClient(a AccountAccessor, options ...func(a *aPIA) error) (APIAccessor, error) {
+	var dao aPIA
+
+	for _, option := range options {
+		option(&dao)
+	}
+
+	if dao.debug == true {
 		var apiaFake aPIA_Fake
 		return apiaFake, nil
 	}
