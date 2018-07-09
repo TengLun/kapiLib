@@ -1,6 +1,6 @@
 # Library for the Campaign Management API
 
-[![GoDoc](https://godoc.org/github.com/TengLun/kapiLib/campaignClient?status.svg)](https://godoc.org/github.com/TengLun/kapiLib/campaignClient)[![Go Report Card](https://goreportcard.com/badge/github.com/TengLun/kapiLib)](https://goreportcard.com/report/github.com/TengLun/kapiLib)
+[![GoDoc](https://godoc.org/github.com/TengLun/kapiLib/campaignClient?status.svg)](https://godoc.org/github.com/TengLun/kapiLib/campaignClient) [![Go Report Card](https://goreportcard.com/badge/github.com/TengLun/kapiLib)](https://goreportcard.com/report/github.com/TengLun/kapiLib)
 
 
 This is a privately created library for the Kochava Campaign Management API.
