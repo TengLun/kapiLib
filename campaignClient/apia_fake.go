@@ -1,13 +1,5 @@
 package campaignclient
 
-import (
-	"bytes"
-	"encoding/json"
-	"fmt"
-	"net/http"
-	"time"
-)
-
 // aPIA_Fake is the functional aPIA_Fakeccessor struct to communicate with the Kochava
 // Premium Publisher API
 type aPIA_Fake struct {
@@ -15,66 +7,90 @@ type aPIA_Fake struct {
 	authKey string
 }
 
-// CreateApp creates an app
-// TODO: Finish
-func (a aPIA_Fake) createApp() error {
-	return nil
+// GetCampaigns API provides the ability to retrieve the entire list of campaigns
+// from the numerical App ID provided in the URL.
+func (a aPIA_Fake) GetCampaigns(stats string) ([]GetCampaignsResponse, error) {
+	return []GetCampaignsResponse{}, nil
 }
 
-// CreateCampaign creates one or more campaigns
-// TODO: Finish
-func (a aPIA_Fake) createCampaign(r ...campaignRequest) (campaignResponse, error) {
+// CreateCampaign API is used to create a new campaign by providing a JSON
+// definition of the campaign.
+func (a aPIA_Fake) CreateCampaign() {
 
-	cr := campaignRequest{
-		Name:           "this campaign",
-		DateEnd:        time.Unix(1490727343, 0),
-		DateStart:      time.Unix(1490727343, 0),
-		DestinationURL: "http://",
-		Source:         "api",
-	}
-
-	body, err := json.Marshal(cr)
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	endpoint := `https://campaign.api.kochava.com/campaign/` + a.appID
-	req, err := http.NewRequest("POST", endpoint, bytes.NewBuffer(body))
-	if err != nil {
-		fmt.Println(err)
-	}
-	req.Header.Set("Authentication-Key", a.authKey)
-
-	return campaignResponse{}, nil
 }
 
-// CreateSegment creates a segment for the tracker
-func (a aPIA_Fake) createSegment(campaignID string, r ...segmentRequest) (segmentResponse, error) {
+// UpdateCampaign API is used to update an existing campaign by providing a JSON
+// definition of the campaign with the modifications. If the campaign is
+// successfully updated an HTTP 200 code and response, as shown below, is
+// returned.
+func (a aPIA_Fake) UpdateCampaign() {
 
-	// endpoint := `https://campaign.api.kochava.com/tier/` + campaignID
-
-	return segmentResponse{}, nil
 }
 
-// CreateTracker creates a tracker in the UI; this is the primary item to create
-// Creating a campaign and segment are necessary in order to create a tracker
-func (a aPIA_Fake) createTracker(r ...trackerRequest) (trackerResponse, error) {
+// GetCampaigns API provides the ability to retrieve a single campaign for the
+// numerical Campaign ID provided in the URL.
+func (a aPIA_Fake) GetCampaign() {
 
-	// endpoint := `https://campaign.api.kochava.com/tracker/` + a.appID + `/create`
-
-	return trackerResponse{}, nil
 }
 
-// RetrieveTrackers retrieves a list of campaigns
-// TODO: Finish
-func (a aPIA_Fake) retrieveTrackers() ([]trackerResponse, error) {
+// This API provides the ability to retrieve the segments for the numerical
+// Campaign ID provided in the URL.
+func (a aPIA_Fake) GetSegments() {
 
-	// endpoint := `https://campaign.api.kochava.com/tracker/` + a.appID
-
-	return []trackerResponse{}, nil
 }
 
-// VerifyCreated verifies the campaigns created match the templates retrieved
-func (a aPIA_Fake) verifyCreated() error {
-	return nil
+// This API is used to create a new segment by providing a JSON definition of the segment.
+func (a aPIA_Fake) CreateSegment() {
+
+}
+
+// This API is used to update an existing segment by providing a JSON definition
+// of the segment with the modifications. If the segment is successfully updated
+// an HTTP 200 code and response, as shown below, is returned.
+func (a aPIA_Fake) UpdateSegment() {
+
+}
+
+// This API provides the ability to retrieve a single segment for the numerical
+// Segment ID provided in the URL.
+func (a aPIA_Fake) GetSegment() {
+
+}
+
+// This API provides the ability to retrieve the entire list of trackers for the
+// numerical App ID provided in the URL.
+func (a aPIA_Fake) GetTrackers() {
+
+}
+
+// This API is used to update an existing tracker by providing a JSON definition
+// of the tracker with modifications. If the tracker is successfully updated an
+// HTTP 200 code and response, as shown below, is returned.
+func (a aPIA_Fake) UpdateTracker() {
+
+}
+
+// This API is used to delete an existing tracker by providing the numerical
+// Tracker ID. If the tracker is deleted an HTTP 200 response will be returned,
+// otherwise another HTTP code and message detailing the error will be returned.
+func (a aPIA_Fake) DeleteTracker() {
+
+}
+
+// This API is used to create a new tracker by providing a JSON definition of
+// the tracker.
+func (a aPIA_Fake) CreateTracker() {
+
+}
+
+// This API provides the ability to retrieve the tracker overrides for the
+// numerical Override ID provided in the URL.
+func (a aPIA_Fake) GetTrackerOverrides() {
+
+}
+
+// This API provides the ability to create tracker overrides for the numerical
+// Tracker ID provided in the URL.
+func (a aPIA_Fake) PostTrackerOverrides() {
+
 }

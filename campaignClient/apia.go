@@ -4,8 +4,9 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
+	"log"
 	"net/http"
-	"time"
 )
 
 // aPIA is the functional aPIAccessor struct to communicate with the Kochava
@@ -13,195 +14,264 @@ import (
 type aPIA struct {
 	appID   string
 	authKey string
+	client  *http.Client
+	logger  *log.Logger
 }
 
-// campaignRequest is CreateCampaign's request object
-type campaignRequest struct {
-	Name           string    `json:"name"`
-	DateEnd        time.Time `json:"date_end"`
-	DateStart      time.Time `json:"date_start"`
-	DestinationURL string    `json:"destination_url"`
-	Source         string    `json:"source"`
+type Campaign struct {
+	ID                     string `json:"id"`
+	AppID                  string `json:"app_id"`
+	Type                   string `json:"type"`
+	Source                 string `json:"source"`
+	Name                   string `json:"name"`
+	DestinationURL         string `json:"destination_url"`
+	DateCreated            int    `json:"date_created"`
+	DateStart              int    `json:"date_start"`
+	DateEnd                int    `json:"date_end"`
+	DateTrackOutsideRange  bool   `json:"date_track_outside_range"`
+	BudgetDaily            int    `json:"budget_daily"`
+	BudgetWeekly           int    `json:"budget_weekly"`
+	BudgetMax              int    `json:"budget_max"`
+	TargetClicks           int    `json:"target_clicks"`
+	TargetInstalls         int    `json:"target_installs"`
+	Meta                   string `json:"meta"`
+	LegacyIoGUID           string `json:"legacy_io_guid"`
+	SmartLinkID            string `json:"smart_link_id"`
+	WhatIfParentCampaignID string `json:"what_if_parent_campaign_id"`
 }
 
-// campaignResponse is CreateCampaign's response object
-type campaignResponse struct {
-	ID                     string      `json:"id"`
-	AppID                  string      `json:"app_id"`
-	Type                   string      `json:"type"`
-	Source                 string      `json:"source"`
-	Name                   string      `json:"name"`
-	DestinationURL         string      `json:"destination_url"`
-	DateCreated            int         `json:"date_created"`
-	DateStart              int         `json:"date_start"`
-	DateEnd                int         `json:"date_end"`
-	DateTrackOutsideRange  bool        `json:"date_track_outside_range"`
-	BudgetDaily            int         `json:"budget_daily"`
-	BudgetWeekly           int         `json:"budget_weekly"`
-	BudgetMax              int         `json:"budget_max"`
-	TargetClicks           int         `json:"target_clicks"`
-	TargetInstalls         int         `json:"target_installs"`
-	Meta                   string      `json:"meta"`
-	LegacyIoGUID           string      `json:"legacy_io_guid"`
-	SmartLinkID            interface{} `json:"smart_link_id"`
-	WhatIfParentCampaignID interface{} `json:"what_if_parent_campaign_id"`
+// GetCampaigns API provides the ability to retrieve the entire list of campaigns
+// from the numerical App ID provided in the URL.
+func (a aPIA) GetCampaigns(stats string) ([]Campaign, error) {
+	endpoint := fmt.Sprintf(`https://campaign.api.kochava.com/campaign/%v?stats=%v`, a.appID, stats)
+
+	req, err := http.NewRequest("GET", endpoint, nil)
+	if err != nil {
+		return []Campaign{}, err
+	}
+
+	req.Header.Add("Authentication-Key", a.authKey)
+
+	res, err := a.client.Do(req)
+	if err != nil {
+		return []Campaign{}, err
+	}
+
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return []Campaign{}, err
+	}
+
+	switch {
+	case res.StatusCode < 300 && res.StatusCode > 199:
+
+		campaignList := make([]Campaign, 0)
+
+		err = json.Unmarshal(body, &campaignList)
+		if err != nil {
+			fmt.Println(err)
+			return []Campaign{}, err
+		}
+		fmt.Println(campaignList)
+
+		return campaignList, nil
+
+	default:
+		fmt.Println(string(body))
+		return []Campaign{}, err
+	}
+
 }
 
-// CreateCampaign creates one or more campaigns
-// TODO: Finish
-func (a aPIA) createCampaign(r ...campaignRequest) (campaignResponse, error) {
+type CreateCampaignRequest struct {
+	Name           string `json:"name"`
+	DateEnd        string `json:"date_end"`
+	DateStart      string `json:"date_start"`
+	DestinationURL string `json:"destination_url"`
+	Source         string `json:"source"`
+}
 
-	cr := campaignRequest{
-		Name:           "this campaign",
-		DateEnd:        time.Unix(1490727343, 0),
-		DateStart:      time.Unix(1490727343, 0),
-		DestinationURL: "http://",
+// CreateCampaign API is used to create a new campaign by providing a JSON
+// definition of the campaign.
+func (a aPIA) CreateCampaign(name, destination string) (Campaign, error) {
+
+	endpoint := fmt.Sprintf("https://campaign.api.kochava.com/campaign/%v", a.appID)
+
+	reqBody := CreateCampaignRequest{
+		Name:           name,
+		DestinationURL: destination,
 		Source:         "api",
 	}
 
-	body, err := json.Marshal(cr)
+	reqBodyBytes, err := json.Marshal(reqBody)
 	if err != nil {
-		fmt.Println(err)
+		return Campaign{}, err
 	}
 
-	endpoint := `https://campaign.api.kochava.com/campaign/` + a.appID
-	req, err := http.NewRequest("POST", endpoint, bytes.NewBuffer(body))
+	req, err := http.NewRequest("POST", endpoint, bytes.NewBuffer(reqBodyBytes))
 	if err != nil {
-		fmt.Println(err)
+		return Campaign{}, err
 	}
-	req.Header.Set("Authentication-Key", a.authKey)
 
-	return campaignResponse{}, nil
+	req.Header.Add("Authentication-Key", a.authKey)
+
+	res, err := a.client.Do(req)
+	if err != nil {
+		return Campaign{}, err
+	}
+
+	if res.StatusCode > 299 || res.StatusCode < 200 {
+		return Campaign{}, fmt.Errorf("api returned non-200 response:\nresponse_code: %v\nresponse_body: %v", res.StatusCode, res.Status)
+	}
+
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return Campaign{}, err
+	}
+
+	var resBody Campaign
+
+	err = json.Unmarshal(body, &resBody)
+	if err != nil {
+		return Campaign{}, err
+	}
+
+	return resBody, nil
 }
 
-// segmentRequest is CreateSegment's request Object
-type segmentRequest struct {
-	Name       string `json:"name"`
-	Source     string `json:"source"`
-	CampaignID string
+type UpdateCampaignRequest struct {
+	ID   string `json:"id"`
+	Name string `json:"name"`
 }
 
-// segmentResponse is CreateSegment's response Object
-type segmentResponse struct {
-	ID                 string      `json:"id"`
-	AppID              string      `json:"app_id"`
-	CampaignID         string      `json:"campaign_id"`
-	Source             string      `json:"source"`
-	Name               string      `json:"name"`
-	TargetGeo          string      `json:"target_geo"`
-	DateCreated        int         `json:"date_created"`
-	WhatIfParentTierID interface{} `json:"what_if_parent_tier_id"`
+// UpdateCampaign API is used to update an existing campaign by providing a JSON
+// definition of the campaign with the modifications. If the campaign is
+// successfully updated an HTTP 200 code and response, as shown below, is
+// returned.
+func (a aPIA) UpdateCampaign(id, name string) (Campaign, error) {
+
+	endpoint := fmt.Sprintf("https://campaign.api.kochava.com/campaign/%v", a.appID)
+
+	reqBody := UpdateCampaignRequest{
+		ID:   id,
+		Name: name,
+	}
+
+	reqBodyBytes, err := json.Marshal(reqBody)
+	if err != nil {
+		return Campaign{}, err
+	}
+
+	req, err := http.NewRequest("POST", endpoint, bytes.NewBuffer(reqBodyBytes))
+	if err != nil {
+		return Campaign{}, err
+	}
+
+	req.Header.Add("Authentication-Key", a.authKey)
+
+	res, err := a.client.Do(req)
+	if err != nil {
+		return Campaign{}, err
+	}
+
+	if res.StatusCode > 299 || res.StatusCode < 200 {
+		return Campaign{}, fmt.Errorf("api returned non-200 response:\nresponse_code: %v\nresponse_body: %v", res.StatusCode, res.Status)
+	}
+
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return Campaign{}, err
+	}
+
+	var resBody Campaign
+
+	err = json.Unmarshal(body, &resBody)
+	if err != nil {
+		return Campaign{}, err
+	}
+
+	return resBody, nil
 }
 
-// CreateSegment creates a segment for the tracker
-func (a aPIA) createSegment(campaignID string, r ...segmentRequest) (segmentResponse, error) {
+// GetCampaigns API provides the ability to retrieve a single campaign for the
+// numerical Campaign ID provided in the URL.
+func (a aPIA) GetCampaign(campaignID string) (Campaign, error) {
 
-	// endpoint := `https://campaign.api.kochava.com/tier/` + campaignID
+	endpoint := fmt.Sprintf("https://campaign.api.kochava.com/campaign/%v/%v", a.appID, campaignID)
 
-	return segmentResponse{}, nil
+	req, err := http.NewRequest("GET", endpoint, nil)
+	if err != nil {
+		return Campaign{}, err
+	}
+
+	req.Header.Add("Authentication-Key", a.authKey)
+
+	res, err := a.client.Do(req)
+	if err != nil {
+		return Campaign{}, err
+	}
+
+	return campaign, nil
 }
 
-// trackerRequest is CreateTracker's request object
-// TODO: Currently removing reengagement functionality; it needs to be implemented
-// for version 1.0 (production version)
-// NOTE: all potential request parameters are included below, however
-//	unnecessary parameters have been commented out
-type trackerRequest struct {
-	Name           string `json:"name"`
-	Type           string `json:"type"`
-	NetworkID      string `json:"network_id"`
-	DestinationURL string `json:"destination_url"`
-	// DestinationURLReengagement string        `json:"destination_url_reengagement"`
-	// NetworkPricing             string        `json:"network_pricing"`
-	// NetworkPrice               int           `json:"network_price"`
-	// PermPublisherAllowView     bool          `json:"perm_publisher_allow_view"`
-	// ClickURLCustomParams       []interface{} `json:"click_url_custom_params"`
-	TierID     string `json:"tier_id"`
-	CampaignID string `json:"campaign_id"`
-	// DestinationData            struct {
-	// 	Type    string `json:"type,omitempty"`
-	// 	TypeObj string `json:"typeObj,omitempty"`
-	// } `json:"destination_data,omitempty"`
-	// Events []string `json:"events"`
+// This API provides the ability to retrieve the segments for the numerical
+// Campaign ID provided in the URL.
+func (a aPIA) GetSegments() {
+
 }
 
-// trackerResponse is CreateTracker's response object
-type trackerResponse struct {
-	ID                         string        `json:"id"`
-	TierID                     string        `json:"tier_id"`
-	CampaignID                 string        `json:"campaign_id"`
-	AppID                      string        `json:"app_id"`
-	DateCreated                time.Time     `json:"date_created"`
-	Source                     string        `json:"source"`
-	GUID                       string        `json:"guid"`
-	Name                       string        `json:"name"`
-	Type                       string        `json:"type"`
-	ClickTrackingURL           string        `json:"click_tracking_url"`
-	ImpTrackingURL             string        `json:"imp_tracking_url"`
-	DestinationURL             string        `json:"destination_url"`
-	DestinationURLReengagement string        `json:"destination_url_reengagement"`
-	NetworkID                  string        `json:"network_id"`
-	NetworkPricing             string        `json:"network_pricing"`
-	NetworkPrice               int           `json:"network_price"`
-	BudgetDaily                int           `json:"budget_daily"`
-	BudgetWeekly               int           `json:"budget_weekly"`
-	BudgetMax                  int           `json:"budget_max"`
-	RtbID                      interface{}   `json:"rtb_id"`
-	RtbDefinition              interface{}   `json:"rtb_definition"`
-	Meta                       string        `json:"meta"`
-	LegacyCampaignID           string        `json:"legacy_campaign_id"`
-	LegacyPostID               string        `json:"legacy_post_id"`
-	PermPublisherAllowView     bool          `json:"perm_publisher_allow_view"`
-	IsActive                   bool          `json:"is_active"`
-	CreativeIds                interface{}   `json:"creative_ids"`
-	ClickURLCustomParams       []interface{} `json:"click_url_custom_params"`
-	DestinationData            struct {
-		Type    string `json:"type"`
-		TypeObj string `json:"typeObj"`
-	} `json:"destination_data"`
-	RtbUpdateStatus            string      `json:"rtb_update_status"`
-	RtbUpdateResponse          interface{} `json:"rtb_update_response"`
-	RtbUpdatePid               interface{} `json:"rtb_update_pid"`
-	S2SDestination             interface{} `json:"s2s_destination"`
-	PostbackURL                interface{} `json:"postback_url"`
-	VerificationRules          interface{} `json:"verification_rules"`
-	SmartLinkID                interface{} `json:"smart_link_id"`
-	WhatIfParentTrackerID      interface{} `json:"what_if_parent_tracker_id"`
-	NetworkName                string      `json:"network_name"`
-	NetworkIsSelfAttributing   bool        `json:"network_is_self_attributing"`
-	NetworkSupportsImpressions bool        `json:"network_supports_impressions"`
-	CampaignName               string      `json:"campaign_name"`
-	TierName                   string      `json:"tier_name"`
-	Events                     interface{} `json:"events"`
-	AppGUID                    string      `json:"app_guid"`
-	AgencyTrackerID            interface{} `json:"agency_tracker_id"`
-	TwttterEventGUID           string      `json:"twttter_event_guid"`
-	GoogleAndroidPostbackURL   string      `json:"google_android_postback_url"`
-	GoogleIosPostbackURL       string      `json:"google_ios_postback_url"`
+// This API is used to create a new segment by providing a JSON definition of the segment.
+func (a aPIA) CreateSegment() {
+
 }
 
-// CreateTracker creates a tracker in the UI; this is the primary item to create
-// Creating a campaign and segment are necessary in order to create a tracker
-func (a aPIA) createTracker(r ...trackerRequest) (trackerResponse, error) {
+// This API is used to update an existing segment by providing a JSON definition
+// of the segment with the modifications. If the segment is successfully updated
+// an HTTP 200 code and response, as shown below, is returned.
+func (a aPIA) UpdateSegment() {
 
-	// endpoint := `https://campaign.api.kochava.com/tracker/` + a.appID + `/create`
-
-	return trackerResponse{}, nil
 }
 
-// RetrieveTrackers retrieves a list of campaigns
-// TODO: Finish
-func (a aPIA) retrieveTrackers() ([]trackerResponse, error) {
+// This API provides the ability to retrieve a single segment for the numerical
+// Segment ID provided in the URL.
+func (a aPIA) GetSegment() {
 
-	// endpoint := `https://campaign.api.kochava.com/tracker/` + a.appID
-
-	return []trackerResponse{}, nil
 }
 
-// VerifyCreated verifies the campaigns created match the templates retrieved
-// TODO: finish this. Not sure on the best method to verify the process went
-// correctly; maybe for simplicities sake we should only check the trackers.
-// Not sure, will have to think about it.
-func (a aPIA) verifyCreated() error {
-	return nil
+// This API provides the ability to retrieve the entire list of trackers for the
+// numerical App ID provided in the URL.
+func (a aPIA) GetTrackers() {
+
+}
+
+// This API is used to update an existing tracker by providing a JSON definition
+// of the tracker with modifications. If the tracker is successfully updated an
+// HTTP 200 code and response, as shown below, is returned.
+func (a aPIA) UpdateTracker() {
+
+}
+
+// This API is used to delete an existing tracker by providing the numerical
+// Tracker ID. If the tracker is deleted an HTTP 200 response will be returned,
+// otherwise another HTTP code and message detailing the error will be returned.
+func (a aPIA) DeleteTracker() {
+
+}
+
+// This API is used to create a new tracker by providing a JSON definition of
+// the tracker.
+func (a aPIA) CreateTracker() {
+
+}
+
+// This API provides the ability to retrieve the tracker overrides for the
+// numerical Override ID provided in the URL.
+func (a aPIA) GetTrackerOverrides() {
+
+}
+
+// This API provides the ability to create tracker overrides for the numerical
+// Tracker ID provided in the URL.
+func (a aPIA) PostTrackerOverrides() {
+
 }
