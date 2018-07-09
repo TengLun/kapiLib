@@ -1,10 +1,10 @@
 package campaignclient
 
-// aPIAccessor interface allows for interfacing with the Kochava Premium Publisher
+// APIAccessor interface allows for interfacing with the Kochava Premium Publisher
 // API; it creates apps and campaigns in the Kochava system. aPIAccessor has
 // two structs that satisfy it: aPIA is a working accessor; aPIA_Fake is a test
 // accessor
-type aPIAccessor interface {
+type APIAccessor interface {
 
 	// GetCampaigns API provides the ability to retrieve the entire list of campaigns
 	// from the numerical App ID provided in the URL.
