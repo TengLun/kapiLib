@@ -8,7 +8,7 @@ import (
 	"net/http"
 )
 
-// APIA is the functional aPIAccessor struct to communicate with the Kochava
+// APIA is the functional APIAccessor struct to communicate with the Kochava
 // Premium Publisher API
 type APIA struct {
 	appID   string
@@ -44,7 +44,7 @@ type Campaign struct {
 
 // GetCampaigns API provides the ability to retrieve the entire list of campaigns
 // from the numerical App ID provided in the URL.
-func (a aPIA) GetCampaigns(stats string) ([]Campaign, error) {
+func (a APIA) GetCampaigns(stats string) ([]Campaign, error) {
 	endpoint := fmt.Sprintf(`https://campaign.api.kochava.com/campaign/%v?stats=%v`, a.appID, stats)
 
 	req, err := http.NewRequest("GET", endpoint, nil)
@@ -96,7 +96,7 @@ type CreateCampaignRequest struct {
 
 // CreateCampaign API is used to create a new campaign by providing a JSON
 // definition of the campaign.
-func (a aPIA) CreateCampaign(name, destination string) (Campaign, error) {
+func (a APIA) CreateCampaign(name, destination string) (Campaign, error) {
 
 	endpoint := fmt.Sprintf("https://campaign.api.kochava.com/campaign/%v", a.appID)
 
@@ -152,7 +152,7 @@ type UpdateCampaignRequest struct {
 // definition of the campaign with the modifications. If the campaign is
 // successfully updated an HTTP 200 code and response, as shown below, is
 // returned.
-func (a aPIA) UpdateCampaign(id, name string) (Campaign, error) {
+func (a APIA) UpdateCampaign(id, name string) (Campaign, error) {
 
 	endpoint := fmt.Sprintf("https://campaign.api.kochava.com/campaign/%v", a.appID)
 
@@ -197,9 +197,9 @@ func (a aPIA) UpdateCampaign(id, name string) (Campaign, error) {
 	return resBody, nil
 }
 
-// GetCampaigns API provides the ability to retrieve a single campaign for the
+// GetCampaign API provides the ability to retrieve a single campaign for the
 // numerical Campaign ID provided in the URL.
-func (a aPIA) GetCampaign(campaignID string) (Campaign, error) {
+func (a APIA) GetCampaign(campaignID string) (Campaign, error) {
 
 	endpoint := fmt.Sprintf("https://campaign.api.kochava.com/campaign/%v/%v", a.appID, campaignID)
 
@@ -246,9 +246,9 @@ type Segment struct {
 	WhatIfParentTierID string `json:"what_if_parent_tier_id"`
 }
 
-// This API provides the ability to retrieve the segments for the numerical
+// GetSegments API provides the ability to retrieve the segments for the numerical
 // Campaign ID provided in the URL.
-func (a aPIA) GetSegments(campaignID string) ([]Segment, error) {
+func (a APIA) GetSegments(campaignID string) ([]Segment, error) {
 
 	endpoint := fmt.Sprintf("https://campaign.api.kochava.com/tier/%v", campaignID)
 
@@ -296,8 +296,8 @@ type CreateSegmentRequest struct {
 	Source string `json:"source"`
 }
 
-// This API is used to create a new segment by providing a JSON definition of the segment.
-func (a aPIA) CreateSegment(name, campaignID string) (Segment, error) {
+// CreateSegment API is used to create a new segment by providing a JSON definition of the segment.
+func (a APIA) CreateSegment(name, campaignID string) (Segment, error) {
 
 	endpoint := fmt.Sprintf("https://campaign.api.kochava.com/tier/%v", campaignID)
 
@@ -348,10 +348,10 @@ type UpdateSegmentRequest struct {
 	Name string `json:"name"`
 }
 
-// This API is used to update an existing segment by providing a JSON definition
+// UpdateSegment API is used to update an existing segment by providing a JSON definition
 // of the segment with the modifications. If the segment is successfully updated
 // an HTTP 200 code and response, as shown below, is returned.
-func (a aPIA) UpdateSegment(name, campaignID, segmentID string) (Segment, error) {
+func (a APIA) UpdateSegment(name, campaignID, segmentID string) (Segment, error) {
 
 	endpoint := fmt.Sprintf("https://campaign.api.kochava.com/tier/%v", campaignID)
 
@@ -396,9 +396,9 @@ func (a aPIA) UpdateSegment(name, campaignID, segmentID string) (Segment, error)
 	return resBody, nil
 }
 
-// This API provides the ability to retrieve a single segment for the numerical
+// GetSegment API provides the ability to retrieve a single segment for the numerical
 // Segment ID provided in the URL.
-func (a aPIA) GetSegment(campaignID, segmentID string) (Segment, error) {
+func (a APIA) GetSegment(campaignID, segmentID string) (Segment, error) {
 
 	endpoint := fmt.Sprintf("https://campaign.api.kochava.com/tier/%v/%v", campaignID, segmentID)
 
@@ -485,11 +485,11 @@ type Tracker struct {
 	TwttterEventGUID         string      `json:"twttter_event_guid,omitempty"`
 }
 
-// This API provides the ability to retrieve the entire list of trackers for the
+// GetTrackers API provides the ability to retrieve the entire list of trackers for the
 // numerical App ID provided in the URL. NOTE: This function does not currently
 // have support for a querystring to filter trackers, even though that ability
 // exists in the API. Support will be added for that eventually.
-func (a aPIA) GetTrackers() ([]Tracker, error) {
+func (a APIA) GetTrackers() ([]Tracker, error) {
 
 	endpoint := fmt.Sprintf("https://campaign.api.kochava.com/tracker/%v", a.appID)
 
@@ -537,10 +537,10 @@ type UpdateTrackerRequest struct {
 	Name string `json:"name"`
 }
 
-// This API is used to update an existing tracker by providing a JSON definition
+// UpdateTracker API is used to update an existing tracker by providing a JSON definition
 // of the tracker with modifications. If the tracker is successfully updated an
 // HTTP 200 code and response, as shown below, is returned.
-func (a aPIA) UpdateTracker(name, trackerID string) (Tracker, error) {
+func (a APIA) UpdateTracker(name, trackerID string) (Tracker, error) {
 
 	endpoint := fmt.Sprintf("https://campaign.api.kochava.com/tracker/%v", a.appID)
 
@@ -585,10 +585,10 @@ func (a aPIA) UpdateTracker(name, trackerID string) (Tracker, error) {
 	return resBody, nil
 }
 
-// This API is used to delete an existing tracker by providing the numerical
+// DeleteTracker API is used to delete an existing tracker by providing the numerical
 // Tracker ID. If the tracker is deleted an HTTP 200 response will be returned,
 // otherwise another HTTP code and message detailing the error will be returned.
-func (a aPIA) DeleteTracker(trackerID string) error {
+func (a APIA) DeleteTracker(trackerID string) error {
 
 	endpoint := fmt.Sprintf("https://campaign.api.kochava.com/tracker/%v/delete/%v", a.appID, trackerID)
 
@@ -631,9 +631,9 @@ type CreateTrackerRequest struct {
 	Events []string `json:"events"`
 }
 
-// This API is used to create a new tracker by providing a JSON definition of
+// CreateTracker API is used to create a new tracker by providing a JSON definition of
 // the tracker.
-func (a aPIA) CreateTracker(name, trackerType, networkID, destinationURL, deeplinkURL, campaignID, segmentID, priceType string, priceValue float32, allowPublisherView bool, events []string, clickURLCustomParams []interface{}) (Tracker, error) {
+func (a APIA) CreateTracker(name, trackerType, networkID, destinationURL, deeplinkURL, campaignID, segmentID, priceType string, priceValue float32, allowPublisherView bool, events []string, clickURLCustomParams []interface{}) (Tracker, error) {
 
 	endpoint := fmt.Sprintf("https://campaign.api.kochava.com/tracker/%v/create", a.appID)
 
@@ -768,9 +768,9 @@ type GetOverridesResponse struct {
 	} `json:"tracker_overrides"`
 }
 
-// This API provides the ability to retrieve the tracker overrides for the
+// GetTrackerOverrides API provides the ability to retrieve the tracker overrides for the
 // numerical Override ID provided in the URL.
-func (a aPIA) GetTrackerOverrides(trackerID string) (GetOverridesResponse, error) {
+func (a APIA) GetTrackerOverrides(trackerID string) (GetOverridesResponse, error) {
 
 	endpoint := fmt.Sprintf("https://campaign.api.kochava.com/tracker/override?id=%v", trackerID)
 
@@ -880,9 +880,9 @@ type PostOverridesRequest struct {
 	} `json:"tracker_overrides"`
 }
 
-// This API provides the ability to create tracker overrides for the numerical
+// PostTrackerOverrides API provides the ability to create tracker overrides for the numerical
 // Tracker ID provided in the URL.
-func (a aPIA) PostTrackerOverrides(trackerID string, overrides PostOverridesRequest) error {
+func (a APIA) PostTrackerOverrides(trackerID string, overrides PostOverridesRequest) error {
 
 	endpoint := fmt.Sprintf("https://campaign.api.kochava.com/tracker/override?id=%v", trackerID)
 
