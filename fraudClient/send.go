@@ -140,7 +140,3 @@ func send(reqBody []byte, api string, action string) error {
 	}
 
 }
-
-func SiteIDS() []siteID {
-
-}

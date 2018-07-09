@@ -5,19 +5,19 @@ const (
 )
 
 // SendInstall to Kochava
-func (c *Client) SendInstall() error {
+func (c *Client) SendInstall(name string, installData struct{}) error {
 
 	return nil
 }
 
 // SendEvent to Kochava
-func (c *Client) SendEvent() error {
+func (c *Client) SendEvent(name string, eventData struct{}) error {
 
 	return nil
 }
 
 // SendIdentity to Kochava
-func (c *Client) SendIdentity() error {
+func (c *Client) SendIdentity(identityName, identityValue string) error {
 
 	return nil
 }
