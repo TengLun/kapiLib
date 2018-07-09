@@ -1,3 +1,6 @@
+// Package campaignclient is a library for the Kochava Campaign Management API
+// The Campaign Management API Integration provides the programmatic tools
+// to create and maintain campaigns, segments and trackers in the Kochava system.
 package campaignclient
 
 import (
