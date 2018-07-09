@@ -12,7 +12,7 @@ https://support.kochava.com/analytics-reports-api/fraud-api
 Here is the import code:
 
 ```golang
-import "github.com/tenglun/kfapi"
+import "github.com/tenglun/kfapi/fraudclient"
 ```
 
 # Usage
@@ -23,7 +23,7 @@ First, initiaze the client using your API key, and account id. The system will a
 as a marketer or network (which changes the calls).
 
 ```golang
-client, err := kfapi.GetAccount("my_api_key", "my_accound_id")
+client, err := fraudclient.GetAccount("my_api_key", "my_accound_id")
 ```
 
 ### Client Options
