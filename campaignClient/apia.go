@@ -5,17 +5,18 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
 )
 
-// aPIA is the functional aPIAccessor struct to communicate with the Kochava
+// APIA is the functional aPIAccessor struct to communicate with the Kochava
 // Premium Publisher API
-type aPIA struct {
+type APIA struct {
 	appID   string
 	authKey string
-	client  *http.Client
-	logger  *log.Logger
+
+	debug bool
+
+	client *http.Client
 }
 
 // Campaign struct defines the information for a campaign object
@@ -607,7 +608,7 @@ func (a aPIA) DeleteTracker(trackerID string) error {
 		return nil
 	}
 
-	return fmt.Errorf("non-200 response: ", res.Status)
+	return fmt.Errorf("non-200 response: %v", res.Status)
 }
 
 // CreateTrackerRequest contains all of the information to create a tracker
@@ -906,6 +907,6 @@ func (a aPIA) PostTrackerOverrides(trackerID string, overrides PostOverridesRequ
 		return nil
 	}
 
-	return fmt.Errorf("non-200 response: ", res.Status)
+	return fmt.Errorf("non-200 response: %v", res.Status)
 
 }
