@@ -1,5 +1,6 @@
 # Library for the Campaign Management API
 
+[![GoDoc](https://godoc.org/github.com/TengLun/kapiLib/campaignClient?status.svg)]
 
 This is a privately created library for the Kochava Campaign Management API.
 
