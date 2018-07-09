@@ -25,7 +25,11 @@ Effort has been made to make this library simple and readable.
 First, initiaze the client using your API key and app id.
 
 ```golang
-client, err := campaignclient.CreateClient(AccountAccessor{	AppID: "myAppId", AuthKey "12345-abcde"})
+a := campaignclient.AccountAccessor{
+  AppID:   "myAppId",
+  AuthKey: "12345-12345-12345-12345-12345",
+}
+client, err := 	campaignclient.CreateClient(a)
 ```
 
 ### Client Options
