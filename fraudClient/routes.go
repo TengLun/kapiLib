@@ -8,7 +8,7 @@ import (
 	"net/http"
 )
 
-func sendRequest(accountID, view, startDate, endDate, format, fraudType, endpoint, authKey string, filters []filter) (interface{}, error) {
+func sendRequest(accountID, view, startDate, endDate, format, fraudType, endpoint, authKey string, filters []FilterObject) (interface{}, error) {
 	defer func() {
 		if err := recover(); err != nil {
 			fmt.Println("Send Request One: ", format)

@@ -143,7 +143,7 @@ func getView(apiKey string) (string, error) {
   "startDate": "2016-11-13",
   "endDate": "2017-1-11",
   "format": "JSON",
-  "filters": []
+  "FilterObjects": []
 }`)))
 	if err != nil {
 		fmt.Println(err)
@@ -168,73 +168,73 @@ func getView(apiKey string) (string, error) {
 }
 
 // Apps lists apps with fraudulent data
-func (l List) Apps(fraudType string, startDate, endDate time.Time, filters ...filter) (interface{}, error) {
+func (l List) Apps(fraudType string, startDate, endDate time.Time, FilterObjects ...FilterObject) (interface{}, error) {
 
 	endpoint := l.BaseURL + fraudEndpointMap[fraudType] + `/list/apps`
 
-	return sendRequest(l.AccountID, l.View, startDate.Format("2006-1-2"), endDate.Format("2006-1-2"), "json", fraudType, endpoint, l.APIKey, filters)
+	return sendRequest(l.AccountID, l.View, startDate.Format("2006-1-2"), endDate.Format("2006-1-2"), "json", fraudType, endpoint, l.APIKey, FilterObjects)
 
 }
 
 // Networks lists networks with fraudulent data
-func (l List) Networks(fraudType string, startDate time.Time, endDate time.Time, filters ...filter) (interface{}, error) {
+func (l List) Networks(fraudType string, startDate time.Time, endDate time.Time, FilterObjects ...FilterObject) (interface{}, error) {
 
 	endpoint := l.BaseURL + fraudEndpointMap[fraudType] + `/list/networks`
 
-	return sendRequest(l.AccountID, l.View, startDate.Format("2006-1-2"), endDate.Format("2006-1-2"), "json", fraudType, endpoint, l.APIKey, filters)
+	return sendRequest(l.AccountID, l.View, startDate.Format("2006-1-2"), endDate.Format("2006-1-2"), "json", fraudType, endpoint, l.APIKey, FilterObjects)
 
 }
 
 // Accounts lists Accounts with fraudulent data
-func (l List) Accounts(fraudType string, startDate time.Time, endDate time.Time, filters ...filter) (interface{}, error) {
+func (l List) Accounts(fraudType string, startDate time.Time, endDate time.Time, FilterObjects ...FilterObject) (interface{}, error) {
 
 	endpoint := l.BaseURL + fraudEndpointMap[fraudType] + `/list/accounts`
 
-	return sendRequest(l.AccountID, l.View, startDate.Format("2006-1-2"), endDate.Format("2006-1-2"), "json", fraudType, endpoint, l.APIKey, filters)
+	return sendRequest(l.AccountID, l.View, startDate.Format("2006-1-2"), endDate.Format("2006-1-2"), "json", fraudType, endpoint, l.APIKey, FilterObjects)
 
 }
 
 // Accounts returns data from accounts with fraudulent data
-func (d Data) Accounts(fraudType string, startDate time.Time, endDate time.Time, filters ...filter) (interface{}, error) {
+func (d Data) Accounts(fraudType string, startDate time.Time, endDate time.Time, FilterObjects ...FilterObject) (interface{}, error) {
 
 	endpoint := d.BaseURL + fraudEndpointMap[fraudType] + `/data`
 
-	return sendRequest(d.AccountID, d.View, startDate.Format("2006-1-2"), endDate.Format("2006-1-2"), "json", fraudType, endpoint, d.APIKey, filters)
+	return sendRequest(d.AccountID, d.View, startDate.Format("2006-1-2"), endDate.Format("2006-1-2"), "json", fraudType, endpoint, d.APIKey, FilterObjects)
 
 }
 
 // Apps returns data from apps with fraudulent data
-func (d Data) Apps(fraudType string, startDate time.Time, endDate time.Time, filters ...filter) (interface{}, error) {
+func (d Data) Apps(fraudType string, startDate time.Time, endDate time.Time, FilterObjects ...FilterObject) (interface{}, error) {
 
 	endpoint := d.BaseURL + fraudEndpointMap[fraudType] + `/app/data`
 
-	return sendRequest(d.AccountID, d.View, startDate.Format("2006-1-2"), endDate.Format("2006-1-2"), "json", fraudType, endpoint, d.APIKey, filters)
+	return sendRequest(d.AccountID, d.View, startDate.Format("2006-1-2"), endDate.Format("2006-1-2"), "json", fraudType, endpoint, d.APIKey, FilterObjects)
 
 }
 
 // SiteIds returns data from siteIds with fraudulent data
-func (d Data) SiteIds(fraudType string, startDate time.Time, endDate time.Time, filters ...filter) (interface{}, error) {
+func (d Data) SiteIds(fraudType string, startDate time.Time, endDate time.Time, FilterObjects ...FilterObject) (interface{}, error) {
 
 	endpoint := d.BaseURL + fraudEndpointMap[fraudType] + `/siteid/data`
 
-	return sendRequest(d.AccountID, d.View, startDate.Format("2006-1-2"), endDate.Format("2006-1-2"), "json", fraudType, endpoint, d.APIKey, filters)
+	return sendRequest(d.AccountID, d.View, startDate.Format("2006-1-2"), endDate.Format("2006-1-2"), "json", fraudType, endpoint, d.APIKey, FilterObjects)
 
 }
 
 // Trackers returns data from trackers with fraudulent data
-func (d Data) Trackers(fraudType string, startDate time.Time, endDate time.Time, filters ...filter) (interface{}, error) {
+func (d Data) Trackers(fraudType string, startDate time.Time, endDate time.Time, FilterObjects ...FilterObject) (interface{}, error) {
 
 	endpoint := d.BaseURL + fraudEndpointMap[fraudType] + `/tracker/data`
 
-	return sendRequest(d.AccountID, d.View, startDate.Format("2006-1-2"), endDate.Format("2006-1-2"), "json", fraudType, endpoint, d.APIKey, filters)
+	return sendRequest(d.AccountID, d.View, startDate.Format("2006-1-2"), endDate.Format("2006-1-2"), "json", fraudType, endpoint, d.APIKey, FilterObjects)
 
 }
 
 // Networks returns data from networks with fraudulent data
-func (d Data) Networks(fraudType string, startDate time.Time, endDate time.Time, filters ...filter) (interface{}, error) {
+func (d Data) Networks(fraudType string, startDate time.Time, endDate time.Time, FilterObjects ...FilterObject) (interface{}, error) {
 
 	endpoint := d.BaseURL + fraudEndpointMap[fraudType] + `/network/data`
 
-	return sendRequest(d.AccountID, d.View, startDate.Format("2006-1-2"), endDate.Format("2006-1-2"), "json", fraudType, endpoint, d.APIKey, filters)
+	return sendRequest(d.AccountID, d.View, startDate.Format("2006-1-2"), endDate.Format("2006-1-2"), "json", fraudType, endpoint, d.APIKey, FilterObjects)
 
 }

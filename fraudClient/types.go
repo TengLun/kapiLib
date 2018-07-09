@@ -51,35 +51,47 @@ type addResponse struct {
 }
 
 type request struct {
-	View      string   `json:"view"`
-	FraudType string   `json:"fraudType"`
-	AccountID string   `json:"accountId"`
-	StartDate string   `json:"startDate"`
-	EndDate   string   `json:"endDate"`
-	Format    string   `json:"format"`
-	Filters   []filter `json:"filters,omitempty"`
+	View      string         `json:"view"`
+	FraudType string         `json:"fraudType"`
+	AccountID string         `json:"accountId"`
+	StartDate string         `json:"startDate"`
+	EndDate   string         `json:"endDate"`
+	Format    string         `json:"format"`
+	Filters   []FilterObject `json:"filters,omitempty"`
 }
 
-// Filter object for modifying requests
-type filter struct {
+// FilterObject for modifying requests
+type FilterObject struct {
 	Dimension string   `json:"dimension"`
 	Values    []string `json:"values"`
 	Modifier  string   `json:"modifier"`
 }
 
 const (
-	AdStacking                  = "adStacking"
-	AnonymousInstall            = "anonymousInstall"
-	DeviceHighClickVolume       = "deviceHighClickVolume"
-	DoubleHashAttribution       = "doubleHashAttribution"
-	GeoOutliers                 = "geoOutliers"
-	InstallReceiptVerification  = "installReceiptVerification"
-	FraudSummary                = "fraudSummary"
-	IPHighClick                 = "ipHighClick"
-	MTTIOutliers                = "mttiOutliers"
-	PlatformDifference          = "platformDifference"
+	// AdStacking Constant to ensure proper spelling per API Requirements
+	AdStacking = "adStacking"
+	// AnonymousInstall Constant to ensure proper spelling per API Requirements
+	AnonymousInstall = "anonymousInstall"
+	// DeviceHighClickVolume Constant to ensure proper spelling per API Requirements
+	DeviceHighClickVolume = "deviceHighClickVolume"
+	// DoubleHashAttribution Constant to ensure proper spelling per API Requirements
+	DoubleHashAttribution = "doubleHashAttribution"
+	// GeoOutliers Constant to ensure proper spelling per API Requirements
+	GeoOutliers = "geoOutliers"
+	// InstallReceiptVerification Constant to ensure proper spelling per API Requirements
+	InstallReceiptVerification = "installReceiptVerification"
+	// FraudSummary Constant to ensure proper spelling per API Requirements
+	FraudSummary = "fraudSummary"
+	// IPHighClick Constant to ensure proper spelling per API Requirements
+	IPHighClick = "ipHighClick"
+	// MTTIOutliers Constant to ensure proper spelling per API Requirements
+	MTTIOutliers = "mttiOutliers"
+	// PlatformDifference Constant to ensure proper spelling per API Requirements
+	PlatformDifference = "platformDifference"
+	// PurchaseReceiptVerification Constant to ensure proper spelling per API Requirements
 	PurchaseReceiptVerification = "purchaseReceiptVerification"
-	TTIOutlier                  = "ttiOutlier"
+	// TTIOutlier Constant to ensure proper spelling per API Requirements
+	TTIOutlier = "ttiOutlier"
 )
 
 var fraudEndpointMap = map[string]string{

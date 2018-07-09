@@ -23,13 +23,13 @@ const (
 )
 
 // Filter returns a filter for a request
-func Filter(dimension string, modifier string, values ...string) filter {
+func Filter(dimension string, modifier string, values ...string) FilterObject {
 
-	filter := filter{
+	f := FilterObject{
 		Dimension: dimension,
 		Modifier:  modifier,
 		Values:    values,
 	}
 
-	return filter
+	return f
 }
