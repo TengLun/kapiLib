@@ -1,5 +1,7 @@
 # Library for the Fraud Identification API
 
+[![GoDoc](https://godoc.org/github.com/TengLun/kapiLib/fraudClient?status.svg)](https://godoc.org/github.com/TengLun/kapiLib/fraudClient) [![Go Report Card](https://goreportcard.com/badge/github.com/tenglun/kapilib)](https://goreportcard.com/report/github.com/tenglun/kapilib)
+
 This is a privately created library to aid in using the Fraud Identification API.
 
 Note that this library is not officially endorsed.
