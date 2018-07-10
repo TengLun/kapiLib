@@ -1,4 +1,4 @@
-# s2sClient
+# s2sClient - INCOMPLETE
 
 This library is for the Kochava server-to-server api, which allows data to be sent to Kochava without using an SDK.
 
