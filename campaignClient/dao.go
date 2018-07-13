@@ -42,12 +42,12 @@ type APIAccessor interface {
 
 	// This API provides the ability to retrieve the entire list of trackers for the
 	// numerical App ID provided in the URL.
-	GetTrackers() ([]Tracker, error)
+	GetTrackers(query string) ([]Tracker, error)
 
 	// This API is used to update an existing tracker by providing a JSON definition
 	// of the tracker with modifications. If the tracker is successfully updated an
 	// HTTP 200 code and response, as shown below, is returned.
-	UpdateTracker(name, trackerID string) (Tracker, error)
+	UpdateTracker(updates Tracker) (Tracker, error)
 
 	// This API is used to delete an existing tracker by providing the numerical
 	// Tracker ID. If the tracker is deleted an HTTP 200 response will be returned,

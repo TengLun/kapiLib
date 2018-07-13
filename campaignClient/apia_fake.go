@@ -1,5 +1,7 @@
 package campaignclient
 
+import "fmt"
+
 // aPIAFake is the functional aPIAFakeccessor struct to communicate with the Kochava
 // Premium Publisher API
 type aPIAFake struct {
@@ -59,14 +61,15 @@ func (a aPIAFake) GetSegment(campaignID, segmentID string) (Segment, error) {
 
 // GetTrackers API provides the ability to retrieve the entire list of trackers for the
 // numerical App ID provided in the URL.
-func (a aPIAFake) GetTrackers() ([]Tracker, error) {
-	return []Tracker{}, nil
+func (a aPIAFake) GetTrackers(query string) ([]Tracker, error) {
+	return []Tracker{Tracker{}, Tracker{}}, nil
 }
 
 // UpdateTracker API is used to update an existing tracker by providing a JSON definition
 // of the tracker with modifications. If the tracker is successfully updated an
 // HTTP 200 code and response, as shown below, is returned.
-func (a aPIAFake) UpdateTracker(name, trackerID string) (Tracker, error) {
+func (a aPIAFake) UpdateTracker(updates Tracker) (Tracker, error) {
+	fmt.Printf("%#v", updates)
 	return Tracker{}, nil
 }
 

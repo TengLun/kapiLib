@@ -453,20 +453,22 @@ type Tracker struct {
 	DestinationURLReengagement string        `json:"destination_url_reengagement"`
 	NetworkID                  string        `json:"network_id"`
 	NetworkPricing             string        `json:"network_pricing"`
-	NetworkPrice               string        `json:"network_price"`
-	BudgetDaily                string        `json:"budget_daily"`
-	BudgetWeekly               string        `json:"budget_weekly"`
-	BudgetMax                  string        `json:"budget_max"`
+	NetworkPrice               float64       `json:"network_price"`
+	BudgetDaily                float64       `json:"budget_daily"`
+	BudgetWeekly               float64       `json:"budget_weekly"`
+	BudgetMax                  float64       `json:"budget_max"`
 	RtbID                      string        `json:"rtb_id"`
 	RtbDefinitions             string        `json:"rtb_definitions"`
 	Meta                       string        `json:"meta"`
 	LegacyCampaignID           string        `json:"legacy_campaign_id"`
 	LegacyPostID               string        `json:"legacy_post_id"`
-	PermPublisherAllowView     string        `json:"perm_publisher_allow_view"`
-	IsActive                   string        `json:"is_active"`
+	PermPublisherAllowView     bool          `json:"perm_publisher_allow_view"`
+	IsActive                   bool          `json:"is_active"`
 	CreativeIds                []interface{} `json:"creative_ids"`
 	ClickURLCustomParams       []interface{} `json:"click_url_custom_params"`
 	DestinationData            struct {
+		Type    string `json:"type,omitempty"`
+		TypeObj string `json:"typeObj,omitempty"`
 	} `json:"destination_data"`
 	RtbUpdateStatus          string      `json:"rtb_update_status"`
 	RtbUpdateResponse        interface{} `json:"rtb_update_response"`
@@ -482,19 +484,20 @@ type Tracker struct {
 	TierName                 string      `json:"tier_name"`
 	AppGUID                  string      `json:"app_guid"`
 	AgencyTrackerID          interface{} `json:"agency_tracker_id"`
-	TwitterEventGUID         string      `json:"twitter_event_guid,omitempty"`
 	GoogleAndroidPostbackURL string      `json:"google_android_postback_url"`
 	GoogleIosPostbackURL     string      `json:"google_ios_postback_url"`
-	TwttterEventGUID         string      `json:"twttter_event_guid,omitempty"`
+	TwitterEventGUID         string      `json:"twttter_event_guid,omitempty"`
+	AgencyNetworkID          string      `json:"agency_network_id,omitempty"`
+	Events                   []string    `json:"events,omitempty"`
 }
 
 // GetTrackers API provides the ability to retrieve the entire list of trackers for the
 // numerical App ID provided in the URL. NOTE: This function does not currently
 // have support for a querystring to filter trackers, even though that ability
 // exists in the API. Support will be added for that eventually.
-func (a APIA) GetTrackers() ([]Tracker, error) {
+func (a APIA) GetTrackers(query string) ([]Tracker, error) {
 
-	endpoint := fmt.Sprintf("https://campaign.api.kochava.com/tracker/%v", a.appID)
+	endpoint := fmt.Sprintf("https://campaign.api.kochava.com/tracker/%v?%v", a.appID, query)
 
 	req, err := http.NewRequest("GET", endpoint, nil)
 	if err != nil {
@@ -512,7 +515,7 @@ func (a APIA) GetTrackers() ([]Tracker, error) {
 	if err != nil {
 		return []Tracker{}, err
 	}
-
+	fmt.Println(string(body))
 	switch {
 	case res.StatusCode < 300 && res.StatusCode > 199:
 
@@ -529,34 +532,65 @@ func (a APIA) GetTrackers() ([]Tracker, error) {
 
 	default:
 		fmt.Println(string(body))
-		return []Tracker{}, err
+		return []Tracker{Tracker{}, Tracker{}}, err
 	}
 
 }
 
 // UpdateTrackerRequest contains all of the necessary information to update a tracker
 type UpdateTrackerRequest struct {
-	ID   string `json:"id"`
-	Name string `json:"name"`
+	ID                         string        `json:"id"`
+	Name                       string        `json:"name,omitempty"`
+	DestinationURL             string        `json:"destination_url,omitempty"`
+	DestinationURLReengagement string        `json:"destination_url_reengagement,omitempty"`
+	LandingPageID              string        `json:"landing_page_id,omitempty"`
+	NetworkPricing             string        `json:"network_pricing,omitempty"`
+	NetworkPrice               float64       `json:"network_price,omitempty"`
+	PermPublisherAllowView     bool          `json:"perm_publisher_allow_view,omitempty"`
+	ClickURLCustomParams       []interface{} `json:"click_url_custom_params,omitempty"`
+	S2SDestination             interface{}   `json:"s2s_destination,omitempty"`
+	VerificationRules          interface{}   `json:"verification_rules,omitempty"`
+	TierID                     string        `json:"tier_id,omitempty"`
+	CampaignID                 string        `json:"campaign_id,omitempty"`
+	DestinationData            struct {
+		Type    string `json:"type,omitempty"`
+		TypeObj string `json:"typeObj,omitempty"`
+	} `json:"destination_data,omitempty"`
+	AgencyNetworkID string   `json:"agency_network_id,omitempty"`
+	Events          []string `json:"events,omitempty"`
 }
 
 // UpdateTracker API is used to update an existing tracker by providing a JSON definition
 // of the tracker with modifications. If the tracker is successfully updated an
 // HTTP 200 code and response, as shown below, is returned.
-func (a APIA) UpdateTracker(name, trackerID string) (Tracker, error) {
+func (a APIA) UpdateTracker(updates Tracker) (Tracker, error) {
+
+	updateRequest := UpdateTrackerRequest{
+		ID:                         updates.ID,
+		Name:                       updates.Name,
+		DestinationURL:             updates.DestinationURL,
+		DestinationURLReengagement: updates.DestinationURLReengagement,
+		LandingPageID:              "",
+		NetworkPricing:             updates.NetworkPricing,
+		NetworkPrice:               updates.NetworkPrice,
+		PermPublisherAllowView:     updates.PermPublisherAllowView,
+		ClickURLCustomParams:       updates.ClickURLCustomParams,
+		S2SDestination:             updates.S2SDestination,
+		VerificationRules:          updates.VerificationRules,
+		TierID:                     updates.TierID,
+		CampaignID:                 updates.CampaignID,
+		DestinationData:            updates.DestinationData,
+		AgencyNetworkID:            updates.AgencyNetworkID,
+		Events:                     updates.Events,
+	}
 
 	endpoint := fmt.Sprintf("https://campaign.api.kochava.com/tracker/%v", a.appID)
 
-	reqBody := UpdateTrackerRequest{
-		ID:   trackerID,
-		Name: name,
-	}
-
-	reqBodyBytes, err := json.Marshal(reqBody)
+	reqBodyBytes, err := json.Marshal(updateRequest)
 	if err != nil {
 		return Tracker{}, err
 	}
-
+	fmt.Println(string(reqBodyBytes))
 	req, err := http.NewRequest("POST", endpoint, bytes.NewBuffer(reqBodyBytes))
 	if err != nil {
 		return Tracker{}, err
