@@ -30,7 +30,7 @@ func (c *Client) SendInstall(installData S2SRequest, settings ...func(s *S2SRequ
 		return err
 	}
 
-	res, err := c.httpClient.Do(req)
+	res, err := c.client.Do(req)
 	if err != nil {
 		return err
 	}
@@ -43,20 +43,11 @@ func (c *Client) SendInstall(installData S2SRequest, settings ...func(s *S2SRequ
 }
 
 // SendEvent to Kochava
-func (c *Client) SendEvent(eventData S2SRequest) error {
+func (c *Client) SendEvent(eventData S2SRequest, settings ...func(s *S2SRequest) error) error {
 
-	if err != nil {
-		return err
+	for _, setting := range settings {
+		setting(&eventData)
 	}
-	err := c.SendInstall(
-		SetDeviceUA("Generic Android 6.0"),
-		SetDeviceID(map[string]string{
-			"idfa":   "12345-6789-0123",
-			"custom": "my_custom_id",
-		}),
-		SetIPAddress("127.0.0.2"),
-		SetDeviceCurrency("USD"),
-	)
 
 	eventData.Action = "event"
 
@@ -70,7 +61,7 @@ func (c *Client) SendEvent(eventData S2SRequest) error {
 		return err
 	}
 
-	res, err := c.httpClient.Do(req)
+	res, err := c.client.Do(req)
 	if err != nil {
 		return err
 	}
@@ -111,7 +102,7 @@ func (c *Client) SendIdentity(identityRequest IdentityRequest) error {
 		return err
 	}
 
-	res, err := c.httpClient.Do(req)
+	res, err := c.client.Do(req)
 	if err != nil {
 		return err
 	}
@@ -128,31 +119,37 @@ type S2SRequest struct {
 	Action       string `json:"action"`
 	KochavaAppID string `json:"kochava_app_id"`
 	AppVer       string `json:"app_ver"`
-	Data         struct {
-		OriginationIP         string            `json:"origination_ip,omitempty"`
-		DeviceUa              string            `json:"device_ua,omitempty"`
-		DeviceVer             string            `json:"device_ver,omitempty"`
-		DeviceIds             map[string]string `json:"device_ids"`
-		EventName             string            `json:"event_name,omitempty"`
-		Currency              string            `json:"currency,omitempty"`
-		EventData             map[string]string `json:"event_data,omitempty"`
-		AppVer                string            `json:"app_ver"`
-		IadAttributionDetails struct {
-			Version31 struct {
-				IadAttribution    string `json:"iad-attribution,omitempty"`
-				IadLineitemID     string `json:"iad-lineitem-id,omitempty"`
-				IadKeyword        string `json:"iad-keyword,omitempty"`
-				IadOrgName        string `json:"iad-org-name,omitempty"`
-				IadClickDate      string `json:"iad-click-date,omitempty"`
-				IadAdgroupName    string `json:"iad-adgroup-name,omitempty"`
-				IadCampaignID     string `json:"iad-campaign-id,omitempty"`
-				IadAdgroupID      string `json:"iad-adgroup-id,omitempty"`
-				IadLineitemName   string `json:"iad-lineitem-name,omitempty"`
-				IadCampaignName   string `json:"iad-campaign-name,omitempty"`
-				IadConversionDate string `json:"iad-conversion-date,omitempty"`
-			} `json:"Version3.1,omitempty"`
-		} `json:"iad_attribution_details,omitempty"`
-	} `json:"data"`
+	Data         Data   `json:"data"`
+}
+
+type Data struct {
+	OriginationIP         string                `json:"origination_ip,omitempty"`
+	DeviceUa              string                `json:"device_ua,omitempty"`
+	DeviceVer             string                `json:"device_ver,omitempty"`
+	DeviceIds             map[string]string     `json:"device_ids"`
+	EventName             string                `json:"event_name,omitempty"`
+	Currency              string                `json:"currency,omitempty"`
+	EventData             map[string]string     `json:"event_data,omitempty"`
+	AppVer                string                `json:"app_ver"`
+	IadAttributionDetails IadAttributionDetails `json:"iad_attribution_details,omitempty"`
+}
+
+type IadAttributionDetails struct {
+	Version31 Version31 `json:"Version3.1,omitempty"`
+}
+
+type Version31 struct {
+	IadAttribution    string `json:"iad-attribution,omitempty"`
+	IadLineitemID     string `json:"iad-lineitem-id,omitempty"`
+	IadKeyword        string `json:"iad-keyword,omitempty"`
+	IadOrgName        string `json:"iad-org-name,omitempty"`
+	IadClickDate      string `json:"iad-click-date,omitempty"`
+	IadAdgroupName    string `json:"iad-adgroup-name,omitempty"`
+	IadCampaignID     string `json:"iad-campaign-id,omitempty"`
+	IadAdgroupID      string `json:"iad-adgroup-id,omitempty"`
+	IadLineitemName   string `json:"iad-lineitem-name,omitempty"`
+	IadCampaignName   string `json:"iad-campaign-name,omitempty"`
+	IadConversionDate string `json:"iad-conversion-date,omitempty"`
 }
 
 // SetDeviceUA configures the requests device UA
@@ -195,3 +192,9 @@ func SetDeviceCurrency(currency string) func(s *S2SRequest) error {
 	}
 
 }
+
+# Improvements Coming Soon
+
+More Set Functions will be added to make sending installs and events easier.
+
+Stay tuned for more developments.

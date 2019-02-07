@@ -14,7 +14,7 @@ import "github.com/tenglun/kfapi/s2sclient"
 
 Effort has been made to make this library simple and readable.
 
-First, initiaze the client using your app guid:
+First, initialize the client using your app guid:
 
 ```golang
 client, err := 	s2sclient.CreateClient("my_app_guid")
@@ -22,8 +22,10 @@ client, err := 	s2sclient.CreateClient("my_app_guid")
 
 ## Sending Installs
 
-Installs are sent as following:
+Installs and events can be send either through using the "Set" functions, or by
+constructing a S2SRequest object, and passing it as the first argument:
 
+Using Set Functions:
 ```golang
 err := client.SendInstall(nil,
                           SetDeviceUA("Generic Android 6.0"),
@@ -33,4 +35,20 @@ err := client.SendInstall(nil,
                             }),
                           SetIPAddress("127.0.0.2"),
                           SetDeviceCurrency("USD"))
+```
+
+Using S2SRequest Object:
+```golang
+install := S2SRequest{
+  Data: Data{
+    DeviceUa: "Generic Android 6.0",
+    DeviceIds: map[string]string{
+      "adid": "00000000-0000-0000-0000-000000000000",
+    },
+    OriginationIP: "127.0.0.1",
+    Currency:      "USD",
+  },
+}
+
+err := client.SendInstall(install)
 ```

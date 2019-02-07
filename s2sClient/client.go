@@ -7,10 +7,11 @@ import (
 
 // Client primary struct to access all of the available methods
 type Client struct {
-	guid string
+	guid  string
+	debug bool
 
-	httpClient *http.Client
-	baseURL    *url.URL
+	client  *http.Client
+	baseURL *url.URL
 }
 
 // CreateClient creates the client to use the methods in the API
@@ -24,8 +25,8 @@ func CreateClient(guid string, options ...func(*Client)) (*Client, error) {
 		option(&client)
 	}
 
-	if client.httpClient == nil {
-		client.httpClient = &http.Client{}
+	if client.client == nil {
+		client.client = &http.Client{}
 	}
 
 	return &client, nil
