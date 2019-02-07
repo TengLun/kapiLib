@@ -1,3 +1,5 @@
+// Package fraudclient allows easy access to the Kochava fraud api; this api
+// allows accessing information from the Kochava fraud console.
 package fraudclient
 
 import (

@@ -1,3 +1,11 @@
+// Package s2sclient is a package that allows sending user engagement information to
+// the Kochava server. These transactions are broken down into either installs
+// or events, which are effectively ations taken post-install. Events can have
+// a substantial amount of meta-data that allows better analytics and user
+// profile creation on the Kochava side.
+//
+// This package also allows sending of IdentityLink information, which is user
+// metadata, and allows cross-device tracking.
 package s2sclient
 
 import (
