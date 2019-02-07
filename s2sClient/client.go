@@ -25,6 +25,11 @@ func CreateClient(guid string, options ...func(*Client)) (*Client, error) {
 		option(&client)
 	}
 
+	if client.debug == true {
+		var cf ClientFake
+		return sf
+	}
+
 	if client.client == nil {
 		client.client = &http.Client{}
 	}
