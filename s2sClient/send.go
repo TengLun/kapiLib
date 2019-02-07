@@ -192,9 +192,3 @@ func SetDeviceCurrency(currency string) func(s *S2SRequest) error {
 	}
 
 }
-
-# Improvements Coming Soon
-
-More Set Functions will be added to make sending installs and events easier.
-
-Stay tuned for more developments.
