@@ -11,9 +11,9 @@ import (
 	"net/http"
 )
 
-// APIA is the functional APIAccessor struct to communicate with the Kochava
+// Client is the functional APIAccessor struct to communicate with the Kochava
 // Premium Publisher API
-type APIA struct {
+type Client struct {
 	appID   string
 	authKey string
 
@@ -47,17 +47,17 @@ type Campaign struct {
 
 // GetCampaigns API provides the ability to retrieve the entire list of campaigns
 // from the numerical App ID provided in the URL.
-func (a APIA) GetCampaigns(stats string) ([]Campaign, error) {
-	endpoint := fmt.Sprintf(`https://campaign.api.kochava.com/campaign/%v?stats=%v`, a.appID, stats)
+func (c Client) GetCampaigns(stats string) ([]Campaign, error) {
+	endpoint := fmt.Sprintf(`https://campaign.api.kochava.com/campaign/%v?stats=%v`, c.appID, stats)
 
 	req, err := http.NewRequest("GET", endpoint, nil)
 	if err != nil {
 		return []Campaign{}, err
 	}
 
-	req.Header.Add("Authentication-Key", a.authKey)
+	req.Header.Add("Authentication-Key", c.authKey)
 
-	res, err := a.client.Do(req)
+	res, err := c.client.Do(req)
 	if err != nil {
 		return []Campaign{}, err
 	}
@@ -99,9 +99,9 @@ type CreateCampaignRequest struct {
 
 // CreateCampaign API is used to create a new campaign by providing a JSON
 // definition of the campaign.
-func (a APIA) CreateCampaign(name, destination string) (Campaign, error) {
+func (c Client) CreateCampaign(name, destination string) (Campaign, error) {
 
-	endpoint := fmt.Sprintf("https://campaign.api.kochava.com/campaign/%v", a.appID)
+	endpoint := fmt.Sprintf("https://campaign.api.kochava.com/campaign/%v", c.appID)
 
 	reqBody := CreateCampaignRequest{
 		Name:           name,
@@ -119,9 +119,9 @@ func (a APIA) CreateCampaign(name, destination string) (Campaign, error) {
 		return Campaign{}, err
 	}
 
-	req.Header.Add("Authentication-Key", a.authKey)
+	req.Header.Add("Authentication-Key", c.authKey)
 
-	res, err := a.client.Do(req)
+	res, err := c.client.Do(req)
 	if err != nil {
 		return Campaign{}, err
 	}
@@ -155,9 +155,9 @@ type UpdateCampaignRequest struct {
 // definition of the campaign with the modifications. If the campaign is
 // successfully updated an HTTP 200 code and response, as shown below, is
 // returned.
-func (a APIA) UpdateCampaign(id, name string) (Campaign, error) {
+func (c Client) UpdateCampaign(id, name string) (Campaign, error) {
 
-	endpoint := fmt.Sprintf("https://campaign.api.kochava.com/campaign/%v", a.appID)
+	endpoint := fmt.Sprintf("https://campaign.api.kochava.com/campaign/%v", c.appID)
 
 	reqBody := UpdateCampaignRequest{
 		ID:   id,
@@ -174,9 +174,9 @@ func (a APIA) UpdateCampaign(id, name string) (Campaign, error) {
 		return Campaign{}, err
 	}
 
-	req.Header.Add("Authentication-Key", a.authKey)
+	req.Header.Add("Authentication-Key", c.authKey)
 
-	res, err := a.client.Do(req)
+	res, err := c.client.Do(req)
 	if err != nil {
 		return Campaign{}, err
 	}
@@ -202,18 +202,18 @@ func (a APIA) UpdateCampaign(id, name string) (Campaign, error) {
 
 // GetCampaign API provides the ability to retrieve a single campaign for the
 // numerical Campaign ID provided in the URL.
-func (a APIA) GetCampaign(campaignID string) (Campaign, error) {
+func (c Client) GetCampaign(campaignID string) (Campaign, error) {
 
-	endpoint := fmt.Sprintf("https://campaign.api.kochava.com/campaign/%v/%v", a.appID, campaignID)
+	endpoint := fmt.Sprintf("https://campaign.api.kochava.com/campaign/%v/%v", c.appID, campaignID)
 
 	req, err := http.NewRequest("GET", endpoint, nil)
 	if err != nil {
 		return Campaign{}, err
 	}
 
-	req.Header.Add("Authentication-Key", a.authKey)
+	req.Header.Add("Authentication-Key", c.authKey)
 
-	res, err := a.client.Do(req)
+	res, err := c.client.Do(req)
 	if err != nil {
 		return Campaign{}, err
 	}
@@ -251,7 +251,7 @@ type Segment struct {
 
 // GetSegments API provides the ability to retrieve the segments for the numerical
 // Campaign ID provided in the URL.
-func (a APIA) GetSegments(campaignID string) ([]Segment, error) {
+func (c Client) GetSegments(campaignID string) ([]Segment, error) {
 
 	endpoint := fmt.Sprintf("https://campaign.api.kochava.com/tier/%v", campaignID)
 
@@ -260,9 +260,9 @@ func (a APIA) GetSegments(campaignID string) ([]Segment, error) {
 		return []Segment{}, err
 	}
 
-	req.Header.Add("Authentication-Key", a.authKey)
+	req.Header.Add("Authentication-Key", c.authKey)
 
-	res, err := a.client.Do(req)
+	res, err := c.client.Do(req)
 	if err != nil {
 		return []Segment{}, err
 	}
@@ -282,7 +282,6 @@ func (a APIA) GetSegments(campaignID string) ([]Segment, error) {
 			fmt.Println(err)
 			return []Segment{}, err
 		}
-		fmt.Println(segmentList)
 
 		return segmentList, nil
 
@@ -300,7 +299,7 @@ type CreateSegmentRequest struct {
 }
 
 // CreateSegment API is used to create a new segment by providing a JSON definition of the segment.
-func (a APIA) CreateSegment(name, campaignID string) (Segment, error) {
+func (c Client) CreateSegment(name, campaignID string) (Segment, error) {
 
 	endpoint := fmt.Sprintf("https://campaign.api.kochava.com/tier/%v", campaignID)
 
@@ -319,9 +318,9 @@ func (a APIA) CreateSegment(name, campaignID string) (Segment, error) {
 		return Segment{}, err
 	}
 
-	req.Header.Add("Authentication-Key", a.authKey)
+	req.Header.Add("Authentication-Key", c.authKey)
 
-	res, err := a.client.Do(req)
+	res, err := c.client.Do(req)
 	if err != nil {
 		return Segment{}, err
 	}
@@ -354,7 +353,7 @@ type UpdateSegmentRequest struct {
 // UpdateSegment API is used to update an existing segment by providing a JSON definition
 // of the segment with the modifications. If the segment is successfully updated
 // an HTTP 200 code and response, as shown below, is returned.
-func (a APIA) UpdateSegment(name, campaignID, segmentID string) (Segment, error) {
+func (c Client) UpdateSegment(name, campaignID, segmentID string) (Segment, error) {
 
 	endpoint := fmt.Sprintf("https://campaign.api.kochava.com/tier/%v", campaignID)
 
@@ -373,9 +372,9 @@ func (a APIA) UpdateSegment(name, campaignID, segmentID string) (Segment, error)
 		return Segment{}, err
 	}
 
-	req.Header.Add("Authentication-Key", a.authKey)
+	req.Header.Add("Authentication-Key", c.authKey)
 
-	res, err := a.client.Do(req)
+	res, err := c.client.Do(req)
 	if err != nil {
 		return Segment{}, err
 	}
@@ -401,7 +400,7 @@ func (a APIA) UpdateSegment(name, campaignID, segmentID string) (Segment, error)
 
 // GetSegment API provides the ability to retrieve a single segment for the numerical
 // Segment ID provided in the URL.
-func (a APIA) GetSegment(campaignID, segmentID string) (Segment, error) {
+func (c Client) GetSegment(campaignID, segmentID string) (Segment, error) {
 
 	endpoint := fmt.Sprintf("https://campaign.api.kochava.com/tier/%v/%v", campaignID, segmentID)
 
@@ -410,9 +409,9 @@ func (a APIA) GetSegment(campaignID, segmentID string) (Segment, error) {
 		return Segment{}, err
 	}
 
-	req.Header.Add("Authentication-Key", a.authKey)
+	req.Header.Add("Authentication-Key", c.authKey)
 
-	res, err := a.client.Do(req)
+	res, err := c.client.Do(req)
 	if err != nil {
 		return Segment{}, err
 	}
@@ -495,18 +494,18 @@ type Tracker struct {
 // numerical App ID provided in the URL. NOTE: This function does not currently
 // have support for a querystring to filter trackers, even though that ability
 // exists in the API. Support will be added for that eventually.
-func (a APIA) GetTrackers(query string) ([]Tracker, error) {
+func (c Client) GetTrackers(query string) ([]Tracker, error) {
 
-	endpoint := fmt.Sprintf("https://campaign.api.kochava.com/tracker/%v?%v", a.appID, query)
+	endpoint := fmt.Sprintf("https://campaign.api.kochava.com/tracker/%v?%v", c.appID, query)
 
 	req, err := http.NewRequest("GET", endpoint, nil)
 	if err != nil {
 		return []Tracker{}, err
 	}
 
-	req.Header.Add("Authentication-Key", a.authKey)
+	req.Header.Add("Authentication-Key", c.authKey)
 
-	res, err := a.client.Do(req)
+	res, err := c.client.Do(req)
 	if err != nil {
 		return []Tracker{}, err
 	}
@@ -515,7 +514,7 @@ func (a APIA) GetTrackers(query string) ([]Tracker, error) {
 	if err != nil {
 		return []Tracker{}, err
 	}
-	fmt.Println(string(body))
+
 	switch {
 	case res.StatusCode < 300 && res.StatusCode > 199:
 
@@ -526,7 +525,6 @@ func (a APIA) GetTrackers(query string) ([]Tracker, error) {
 			fmt.Println(err)
 			return []Tracker{}, err
 		}
-		fmt.Println(trackerList)
 
 		return trackerList, nil
 
@@ -563,7 +561,7 @@ type UpdateTrackerRequest struct {
 // UpdateTracker API is used to update an existing tracker by providing a JSON definition
 // of the tracker with modifications. If the tracker is successfully updated an
 // HTTP 200 code and response, as shown below, is returned.
-func (a APIA) UpdateTracker(updates Tracker) (Tracker, error) {
+func (c Client) UpdateTracker(updates Tracker) (Tracker, error) {
 
 	updateRequest := UpdateTrackerRequest{
 		ID:                         updates.ID,
@@ -584,21 +582,21 @@ func (a APIA) UpdateTracker(updates Tracker) (Tracker, error) {
 		Events:                     updates.Events,
 	}
 
-	endpoint := fmt.Sprintf("https://campaign.api.kochava.com/tracker/%v", a.appID)
+	endpoint := fmt.Sprintf("https://campaign.api.kochava.com/tracker/%v", c.appID)
 
 	reqBodyBytes, err := json.Marshal(updateRequest)
 	if err != nil {
 		return Tracker{}, err
 	}
-	fmt.Println(string(reqBodyBytes))
+
 	req, err := http.NewRequest("POST", endpoint, bytes.NewBuffer(reqBodyBytes))
 	if err != nil {
 		return Tracker{}, err
 	}
 
-	req.Header.Add("Authentication-Key", a.authKey)
+	req.Header.Add("Authentication-Key", c.authKey)
 
-	res, err := a.client.Do(req)
+	res, err := c.client.Do(req)
 	if err != nil {
 		return Tracker{}, err
 	}
@@ -625,18 +623,18 @@ func (a APIA) UpdateTracker(updates Tracker) (Tracker, error) {
 // DeleteTracker API is used to delete an existing tracker by providing the numerical
 // Tracker ID. If the tracker is deleted an HTTP 200 response will be returned,
 // otherwise another HTTP code and message detailing the error will be returned.
-func (a APIA) DeleteTracker(trackerID string) error {
+func (c Client) DeleteTracker(trackerID string) error {
 
-	endpoint := fmt.Sprintf("https://campaign.api.kochava.com/tracker/%v/delete/%v", a.appID, trackerID)
+	endpoint := fmt.Sprintf("https://campaign.api.kochava.com/tracker/%v/delete/%v", c.appID, trackerID)
 
 	req, err := http.NewRequest("DELETE", endpoint, nil)
 	if err != nil {
 		return err
 	}
 
-	req.Header.Add("Authentication-Key", a.authKey)
+	req.Header.Add("Authentication-Key", c.authKey)
 
-	res, err := a.client.Do(req)
+	res, err := c.client.Do(req)
 	if err != nil {
 		return err
 	}
@@ -670,9 +668,9 @@ type CreateTrackerRequest struct {
 
 // CreateTracker API is used to create a new tracker by providing a JSON definition of
 // the tracker.
-func (a APIA) CreateTracker(name, trackerType, networkID, destinationURL, deeplinkURL, campaignID, segmentID, priceType string, priceValue float32, allowPublisherView bool, events []string, clickURLCustomParams []interface{}) (Tracker, error) {
+func (c Client) CreateTracker(name, trackerType, networkID, destinationURL, deeplinkURL, campaignID, segmentID, priceType string, priceValue float32, allowPublisherView bool, events []string, clickURLCustomParams []interface{}) (Tracker, error) {
 
-	endpoint := fmt.Sprintf("https://campaign.api.kochava.com/tracker/%v/create", a.appID)
+	endpoint := fmt.Sprintf("https://campaign.api.kochava.com/tracker/%v/create", c.appID)
 
 	reqBody := CreateTrackerRequest{
 		Name:                       name,
@@ -699,9 +697,9 @@ func (a APIA) CreateTracker(name, trackerType, networkID, destinationURL, deepli
 		return Tracker{}, err
 	}
 
-	req.Header.Add("Authentication-Key", a.authKey)
+	req.Header.Add("Authentication-Key", c.authKey)
 
-	res, err := a.client.Do(req)
+	res, err := c.client.Do(req)
 	if err != nil {
 		return Tracker{}, err
 	}
@@ -729,7 +727,7 @@ func (a APIA) CreateTracker(name, trackerType, networkID, destinationURL, deepli
 type GetOverridesResponse struct {
 	Success          bool   `json:"success"`
 	RequestID        string `json:"request_id"`
-	TrackerOverrides struct {
+	TrackerOverrides []struct {
 		DeviceIDLookbackWindow struct {
 			Name  string `json:"name"`
 			Key   string `json:"key"`
@@ -807,31 +805,36 @@ type GetOverridesResponse struct {
 
 // GetTrackerOverrides API provides the ability to retrieve the tracker overrides for the
 // numerical Override ID provided in the URL.
-func (a APIA) GetTrackerOverrides(trackerID string) (GetOverridesResponse, error) {
+func (c Client) GetTrackerOverrides(trackerID string) (GetOverridesResponse, error) {
 
 	endpoint := fmt.Sprintf("https://campaign.api.kochava.com/tracker/override?id=%v", trackerID)
 
 	req, err := http.NewRequest("GET", endpoint, nil)
 	if err != nil {
+		fmt.Println("Request Creation Failed: ")
 		return GetOverridesResponse{}, err
 	}
 
-	req.Header.Add("Authentication-Key", a.authKey)
+	req.Header.Add("Authentication-Key", c.authKey)
 
-	res, err := a.client.Do(req)
+	res, err := c.client.Do(req)
 	if err != nil {
+		fmt.Println("Request Failed: ")
 		return GetOverridesResponse{}, err
 	}
 
 	body, err := ioutil.ReadAll(res.Body)
 	if err != nil {
+		fmt.Println("Response Body ReadAll Failed: ")
 		return GetOverridesResponse{}, err
 	}
 
 	var resBody GetOverridesResponse
 
-	err = json.Unmarshal(body, resBody)
+	err = json.Unmarshal(body, &resBody)
 	if err != nil {
+		fmt.Println("JSON UnMarshal Failed: ")
+		fmt.Printf("%#v\n", string(body))
 		return GetOverridesResponse{}, err
 	}
 
@@ -919,7 +922,7 @@ type PostOverridesRequest struct {
 
 // PostTrackerOverrides API provides the ability to create tracker overrides for the numerical
 // Tracker ID provided in the URL.
-func (a APIA) PostTrackerOverrides(trackerID string, overrides PostOverridesRequest) error {
+func (c Client) PostTrackerOverrides(trackerID string, overrides PostOverridesRequest) error {
 
 	endpoint := fmt.Sprintf("https://campaign.api.kochava.com/tracker/override?id=%v", trackerID)
 
@@ -933,9 +936,9 @@ func (a APIA) PostTrackerOverrides(trackerID string, overrides PostOverridesRequ
 		return err
 	}
 
-	req.Header.Add("Authentication-Key", a.authKey)
+	req.Header.Add("Authentication-Key", c.authKey)
 
-	res, err := a.client.Do(req)
+	res, err := c.client.Do(req)
 	if err != nil {
 		return err
 	}

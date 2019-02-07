@@ -8,24 +8,24 @@ type AccountAccessor struct {
 	AuthKey string
 }
 
-// CreateClient returns an accessor object. If debug flag is true, a aPIA_Fake is
-// returned for debugging purposes. Otherwise, an aPIA struct is returned. Options
+// CreateClient returns an accessor object. If debug flag is true, a Client_Fake is
+// returned for debugging purposes. Otherwise, an Client struct is returned. Options
 // are passed using functional options.
-func CreateClient(a AccountAccessor, options ...func(a *APIA) error) (APIAccessor, error) {
-	var dao APIA
+func CreateClient(a AccountAccessor, options ...func(c *Client) error) (APIAccessor, error) {
+	var dao Client
 
 	for _, option := range options {
 		option(&dao)
 	}
 
 	if dao.debug == true {
-		var apiaFake aPIAFake
-		return apiaFake, nil
+		var clientFake ClientFake
+		return clientFake, nil
 	}
 
-	var apia APIA
-	apia.appID = a.AppID
-	apia.authKey = a.AuthKey
-	apia.client = &http.Client{}
-	return apia, nil
+	var client Client
+	client.appID = a.AppID
+	client.authKey = a.AuthKey
+	client.client = &http.Client{}
+	return client, nil
 }
