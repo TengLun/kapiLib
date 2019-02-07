@@ -52,3 +52,9 @@ install := S2SRequest{
 
 err := client.SendInstall(install)
 ```
+
+# Improvements Coming Soon
+
+More Set Functions will be added to make sending installs and events easier.
+
+Stay tuned for more developments.
