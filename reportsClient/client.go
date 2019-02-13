@@ -1,4 +1,4 @@
-package reportsClient
+package reportsclient
 
 import (
 	"bytes"
