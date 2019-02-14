@@ -948,5 +948,4 @@ func (c Client) PostTrackerOverrides(trackerID string, overrides PostOverridesRe
 	}
 
 	return fmt.Errorf("non-200 response: %v", res.Status)
-
 }

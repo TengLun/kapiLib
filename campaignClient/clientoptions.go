@@ -8,6 +8,7 @@ import (
 func SetHTTPClient(httpClient *http.Client) func(*Client) error {
 	return func(client *Client) error {
 		client.client = httpClient
+
 		return nil
 	}
 }
@@ -17,6 +18,7 @@ func SetHTTPClient(httpClient *http.Client) func(*Client) error {
 func SetDebugTrue() func(*Client) error {
 	return func(client *Client) error {
 		client.debug = true
+
 		return nil
 	}
 }
