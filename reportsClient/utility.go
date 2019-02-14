@@ -61,6 +61,8 @@ type UpdateScheduledReportDistributionListRequest struct {
 	Notify  []string `json:"notify"`
 }
 
+// UpdateScheduledReportDistributionList sends a request to update the distribution
+// list for a specific scheduled report
 func (c Client) UpdateScheduledReportDistributionList(reqBody UtilityRequest, reportType string) error {
 
 	var endpoint string
@@ -114,6 +116,7 @@ func (c Client) UpdateScheduledReportDistributionList(reqBody UtilityRequest, re
 
 }
 
+// DeleteScheduledReport sends a request to delete a scheduled report
 func (c Client) DeleteScheduledReport(reqBody UtilityRequest) error {
 
 	var r ReportStatusResponse
@@ -318,6 +321,8 @@ func (c Client) DeleteQueuedReport(reqBody UtilityRequest) error {
 	return nil
 }
 
+// RequestAppListResponse contains the response to a request for an app access
+// list by API Key
 type RequestAppListResponse []struct {
 	Status      string `json:"status"`
 	GUID        string `json:"guid"`
@@ -327,6 +332,8 @@ type RequestAppListResponse []struct {
 	Platform    string `json:"platform"`
 }
 
+// RequestAppList sends request to return the apps that a given API key has
+// access to
 func (c Client) RequestAppList(reqBody UtilityRequest) (RequestAppListResponse, error) {
 	endpoint := "https://reporting.api.kochava.com/v1.4/getapps"
 
@@ -364,6 +371,8 @@ func (c Client) RequestAppList(reqBody UtilityRequest) (RequestAppListResponse, 
 	return r, nil
 }
 
+// ReportsByAPIResponse is the response of a list of reports queued usig a specific
+// API key
 type ReportsByAPIResponse []struct {
 	Status          string `json:"status"`
 	ReportToken     string `json:"report_token"`
@@ -385,6 +394,8 @@ type UtilityRequest struct {
 	Token   string `json:"token"`
 }
 
+// ReportStatusResponse contains the response to a request to discover
+// the status of a queued report
 type ReportStatusResponse struct {
 	Status        string `json:"status"`
 	StatusDetail  string `json:"status_detail"`

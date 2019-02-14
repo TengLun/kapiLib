@@ -10,6 +10,7 @@ import (
 	"time"
 )
 
+// ReportRequest is a request object to request a report
 type ReportRequest struct {
 	APIKey           string           `json:"api_key"`
 	AppGUID          string           `json:"app_guid"`
@@ -30,6 +31,7 @@ type ReportRequest struct {
 	PreviousTime     string           `json:"previous_time"`
 }
 
+// RequestStatus is a report status response struct
 type RequestStatus struct {
 	Status      string `json:"status"`
 	ReportToken string `json:"report_token"`
@@ -91,11 +93,13 @@ func SetReportTrafficGrouping(groupings []string) func(*ReportRequest) error {
 	}
 }
 
+// TrafficFiltering is a struct to define report filters
 type TrafficFiltering struct {
 	Network        []string `json:"network"`
 	ExcludeCountry []string `json:"exclude_country"`
 }
 
+// SetTrafficFilters is a report option function setting the filters for a report request
 func SetTrafficFilters(networkFilter, countryFilter []string) func(*ReportRequest) error {
 	return func(r *ReportRequest) error {
 		var tf TrafficFiltering
@@ -114,6 +118,7 @@ func SetColumnsOrder(columnsOrder []string) func(*ReportRequest) error {
 	}
 }
 
+// RequestSummaryReport sends a request to queue a summary report
 func (c Client) RequestSummaryReport(reqBody ReportRequest) (ReportRequestResponse, error) {
 	endpoint := "https://reporting.api.kochava.com/v1.4/summary"
 
@@ -159,23 +164,27 @@ func (c Client) requestReport(reqBody ReportRequest, endpoint string) (ReportReq
 	return r, nil
 }
 
+// RequestDetailReport sends a request to queue a detail report
 func (c Client) RequestDetailReport(reqBody ReportRequest) (ReportRequestResponse, error) {
 	endpoint := "https://reporting.api.kochava.com/v1.4/detail"
 
 	return c.requestReport(reqBody, endpoint)
 }
 
+// ReportRequestResponse contains the response to a request to queue a report
 type ReportRequestResponse struct {
 	Status      string `json:"status"`
 	ReportToken string `json:"report_token"`
 	Error       string `json:"error"`
 }
 
+// ScheduleSummaryReport sends a request to schedule a summary report
 func (c Client) ScheduleSummaryReport(reqBody ReportRequest) (ReportRequestResponse, error) {
 	endpoint := "https://reporting.api.kochava.com/v1.4/schedule/summary"
 	return c.requestReport(reqBody, endpoint)
 }
 
+// ScheduleDetailReport sends a request to schedule a detail report
 func (c Client) ScheduleDetailReport(reqBody ReportRequest) (ReportRequestResponse, error) {
 	endpoint := "https://reporting.api.kochava.com/v1.4/schedule/detail"
 	return c.requestReport(reqBody, endpoint)

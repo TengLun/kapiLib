@@ -10,7 +10,7 @@ import (
 
 // Client struct
 type Client struct {
-	AppGuid        string
+	AppGUID        string
 	APIKey         string
 	DeliveryMethod []string
 	TimeZone       string
@@ -20,10 +20,10 @@ type Client struct {
 }
 
 // NewClient returns a Client struct
-func NewClient(AppGuid, APIKey string, options ...func(*Client) error) (Client, error) {
+func NewClient(AppGUID, APIKey string, options ...func(*Client) error) (Client, error) {
 	var c Client
 
-	c.AppGuid = AppGuid
+	c.AppGUID = AppGUID
 	c.APIKey = APIKey
 
 	for _, option := range options {
@@ -36,11 +36,14 @@ func NewClient(AppGuid, APIKey string, options ...func(*Client) error) (Client, 
 	return c, nil
 }
 
+// QueryAuthorizedResponse contains the response for authorized grouping/Filtering
+// response
 type QueryAuthorizedResponse struct {
 	Status      string   `json:"status"`
 	ValidFields []string `json:"valid_fields"`
 }
 
+// QueryReportTemplateResponse contains the reports templates response
 type QueryReportTemplateResponse struct {
 	Status         string `json:"status"`
 	TemplateValues []struct {
@@ -67,6 +70,7 @@ type QueryReportTemplateResponse struct {
 	} `json:"template_values"`
 }
 
+// QueryColumnTemplateResponse contains the response for column templates for Reports
 type QueryColumnTemplateResponse struct {
 	Status         string `json:"status"`
 	TemplateValues []struct {
@@ -80,6 +84,7 @@ type QueryColumnTemplateResponse struct {
 	} `json:"template_values"`
 }
 
+// UpdateColumnTemplateRequest is a request object to modify the column templates
 type UpdateColumnTemplateRequest struct {
 	APIKey           string   `json:"api_key"`
 	AppID            int      `json:"app_id"`
@@ -245,7 +250,7 @@ func (c Client) QueryColumnTemplate() (QueryColumnTemplateResponse, error) {
 
 }
 
-// SaveTemplateColumns
+// SaveTemplateColumns modifies the column template for a given report
 func (c Client) SaveTemplateColumns(body UpdateColumnTemplateRequest) error {
 
 	reqBody, err := json.Marshal(body)
