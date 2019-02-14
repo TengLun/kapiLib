@@ -122,6 +122,7 @@ type S2SRequest struct {
 	Data         Data   `json:"data"`
 }
 
+// Data is a struct that contains the data for a specific install or event
 type Data struct {
 	OriginationIP         string                `json:"origination_ip,omitempty"`
 	DeviceUa              string                `json:"device_ua,omitempty"`
@@ -134,10 +135,12 @@ type Data struct {
 	IadAttributionDetails IadAttributionDetails `json:"iad_attribution_details,omitempty"`
 }
 
+// IadAttributionDetails is the parent struct for iad information
 type IadAttributionDetails struct {
 	Version31 Version31 `json:"Version3.1,omitempty"`
 }
 
+// Version31 contains iAd claim information
 type Version31 struct {
 	IadAttribution    string `json:"iad-attribution,omitempty"`
 	IadLineitemID     string `json:"iad-lineitem-id,omitempty"`
