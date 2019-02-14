@@ -5,7 +5,7 @@ import (
 	"net/url"
 )
 
-// Client primary struct to access all of the available methods
+// ClientFake struct to allow debugging of the S2SClient
 type ClientFake struct {
 	guid  string
 	debug bool

@@ -23,7 +23,7 @@ type Client struct {
 }
 
 // CreateClient creates the client to use the methods in the API
-func CreateClient(guid string, options ...func(*Client)) (*Client, error) {
+func CreateClient(guid string, options ...func(*Client)) (APIAccessor, error) {
 
 	var client Client
 
@@ -35,7 +35,7 @@ func CreateClient(guid string, options ...func(*Client)) (*Client, error) {
 
 	if client.debug == true {
 		var cf ClientFake
-		return sf
+		return cf, nil
 	}
 
 	if client.client == nil {

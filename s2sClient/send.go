@@ -12,7 +12,7 @@ const (
 )
 
 // SendInstall to Kochava
-func (c *Client) SendInstall(installData S2SRequest, settings ...func(s *S2SRequest) error) error {
+func (c Client) SendInstall(installData S2SRequest, settings ...func(s *S2SRequest) error) error {
 
 	for _, setting := range settings {
 		setting(&installData)
@@ -43,7 +43,7 @@ func (c *Client) SendInstall(installData S2SRequest, settings ...func(s *S2SRequ
 }
 
 // SendEvent to Kochava
-func (c *Client) SendEvent(eventData S2SRequest, settings ...func(s *S2SRequest) error) error {
+func (c Client) SendEvent(eventData S2SRequest, settings ...func(s *S2SRequest) error) error {
 
 	for _, setting := range settings {
 		setting(&eventData)
@@ -88,7 +88,7 @@ type IdentityRequest struct {
 }
 
 // SendIdentity to Kochava
-func (c *Client) SendIdentity(identityRequest IdentityRequest) error {
+func (c Client) SendIdentity(identityRequest IdentityRequest) error {
 
 	identityEndpoint := "http://control.kochava.com/v1/cpi/identityLink.php"
 

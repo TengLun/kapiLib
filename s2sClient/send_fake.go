@@ -7,7 +7,7 @@ import (
 )
 
 // SendInstall to Kochava
-func (c *ClientFake) SendInstall(installData S2SRequest, settings ...func(s *S2SRequest) error) error {
+func (c ClientFake) SendInstall(installData S2SRequest, settings ...func(s *S2SRequest) error) error {
 
 	for _, setting := range settings {
 		setting(&installData)
@@ -20,7 +20,7 @@ func (c *ClientFake) SendInstall(installData S2SRequest, settings ...func(s *S2S
 		return err
 	}
 
-	req, err := http.NewRequest("POST", endpoint, bytes.NewBuffer(body))
+	_, err = http.NewRequest("POST", endpoint, bytes.NewBuffer(body))
 	if err != nil {
 		return err
 	}
@@ -30,7 +30,7 @@ func (c *ClientFake) SendInstall(installData S2SRequest, settings ...func(s *S2S
 }
 
 // SendEvent to Kochava
-func (c *ClientFake) SendEvent(eventData S2SRequest, settings ...func(s *S2SRequest) error) error {
+func (c ClientFake) SendEvent(eventData S2SRequest, settings ...func(s *S2SRequest) error) error {
 
 	for _, setting := range settings {
 		setting(&eventData)
@@ -43,7 +43,7 @@ func (c *ClientFake) SendEvent(eventData S2SRequest, settings ...func(s *S2SRequ
 		return err
 	}
 
-	req, err := http.NewRequest("POST", endpoint, bytes.NewBuffer(body))
+	_, err = http.NewRequest("POST", endpoint, bytes.NewBuffer(body))
 	if err != nil {
 		return err
 	}
@@ -53,7 +53,7 @@ func (c *ClientFake) SendEvent(eventData S2SRequest, settings ...func(s *S2SRequ
 }
 
 // SendIdentity to Kochava
-func (c *ClientFake) SendIdentity(identityRequest IdentityRequest) error {
+func (c ClientFake) SendIdentity(identityRequest IdentityRequest) error {
 
 	identityEndpoint := "http://control.kochava.com/v1/cpi/identityLink.php"
 
@@ -62,7 +62,7 @@ func (c *ClientFake) SendIdentity(identityRequest IdentityRequest) error {
 		return err
 	}
 
-	req, err := http.NewRequest("POST", identityEndpoint, bytes.NewBuffer(body))
+	_, err = http.NewRequest("POST", identityEndpoint, bytes.NewBuffer(body))
 	if err != nil {
 		return err
 	}
