@@ -530,7 +530,7 @@ func (c Client) GetTrackers(query string) ([]Tracker, error) {
 
 	default:
 		fmt.Println(string(body))
-		return []Tracker{Tracker{}, Tracker{}}, err
+		return []Tracker{{}, {}}, err
 	}
 
 }
