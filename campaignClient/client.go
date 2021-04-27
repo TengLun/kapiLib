@@ -469,12 +469,65 @@ type Tracker struct {
 		Type    string `json:"type,omitempty"`
 		TypeObj string `json:"typeObj,omitempty"`
 	} `json:"destination_data"`
-	RtbUpdateStatus          string      `json:"rtb_update_status"`
-	RtbUpdateResponse        interface{} `json:"rtb_update_response"`
-	RtbUpdatePid             interface{} `json:"rtb_update_pid"`
-	S2SDestination           interface{} `json:"s2s_destination"`
-	PostbackURL              interface{} `json:"postback_url"`
-	VerificationRules        interface{} `json:"verification_rules"`
+	RtbUpdateStatus   string      `json:"rtb_update_status"`
+	RtbUpdateResponse interface{} `json:"rtb_update_response"`
+	RtbUpdatePid      interface{} `json:"rtb_update_pid"`
+	S2SDestination    interface{} `json:"s2s_destination"`
+	PostbackURL       interface{} `json:"postback_url"`
+	VerificationRules struct {
+		Rule struct {
+			CityIn                      []interface{} `json:"city_in"`
+			CityNotIn                   []interface{} `json:"city_not_in"`
+			DmaIn                       []interface{} `json:"dma_in"`
+			DmaNotIn                    []interface{} `json:"dma_not_in"`
+			PostalIn                    []interface{} `json:"postal_in"`
+			PostalNotIn                 []interface{} `json:"postal_not_in"`
+			StateIn                     []interface{} `json:"state_in"`
+			StateNotIn                  []interface{} `json:"state_not_in"`
+			CountryIn                   []interface{} `json:"country_in"`
+			CountryNotIn                []interface{} `json:"country_not_in"`
+			DeviceTypeIn                []interface{} `json:"device_type_in"`
+			DeviceTypeNotIn             []interface{} `json:"device_type_not_in"`
+			DeviceVersionIn             []interface{} `json:"device_version_in"`
+			DeviceVersionNotIn          []interface{} `json:"device_version_not_in"`
+			OsVersionIn                 []interface{} `json:"os_version_in"`
+			OsVersionNotIn              []interface{} `json:"os_version_not_in"`
+			OsVersionGreaterThan        []interface{} `json:"os_version_greater_than"`
+			OsVersionLessThan           []interface{} `json:"os_version_less_than"`
+			PlatformIn                  []interface{} `json:"platform_in"`
+			PlatformNotIn               []interface{} `json:"platform_not_in"`
+			BlacklistDevice             bool          `json:"blacklist_device"`
+			BlacklistIP                 bool          `json:"blacklist_ip"`
+			BlacklistSite               bool          `json:"blacklist_site"`
+			FrequencyCapClick           interface{}   `json:"frequency_cap_click"`
+			FrequencyCapMinutes         interface{}   `json:"frequency_cap_minutes"`
+			FrequencyCapImp             interface{}   `json:"frequency_cap_imp"`
+			FrequencyCapClickDefinition []interface{} `json:"frequency_cap_click_definition"`
+			FrequencyCapImpDefinition   []interface{} `json:"frequency_cap_imp_definition"`
+			DeviceLanguageIn            []interface{} `json:"device_language_in"`
+			DeviceLanguageNotIn         []interface{} `json:"device_language_not_in"`
+			UtmSourceMatchRequired      bool          `json:"utm_source_match_required"`
+			UtmSourceMatchForbidden     bool          `json:"utm_source_match_forbidden"`
+			ReferrerClickTimeRequired   bool          `json:"referrer_click_time_required"`
+			MinimumTimeToInstall        int           `json:"minimum_time_to_install"`
+			ReceiptStatusIn             []string      `json:"receipt_status_in"`
+			ValidTrafficDateEnabled     bool          `json:"valid_traffic_date_enabled"`
+			ValidTrafficDateStart       int           `json:"valid_traffic_date_start"`
+			ValidTrafficDateEnd         int           `json:"valid_traffic_date_end"`
+			FrequencyCapRules           struct {
+			} `json:"frequency_cap_rules"`
+			Meta struct {
+				DeviceTypeHumanReadable []interface{} `json:"device_type_human_readable"`
+				OsVersionHumanReadable  []interface{} `json:"os_version_human_readable"`
+			} `json:"meta"`
+		} `json:"rule"`
+		FailAction struct {
+			AppendParam     bool `json:"append_param"`
+			DeliverPostback bool `json:"deliver_postback"`
+			Reconcile       bool `json:"reconcile"`
+		} `json:"fail_action"`
+		Enabled bool `json:"enabled"`
+	} `json:"verification_rules"`
 	SmartLinkID              interface{} `json:"smart_link_id"`
 	WhatIfParentTrackerID    interface{} `json:"what_if_parent_tracker_id"`
 	NetworkName              string      `json:"network_name"`
@@ -547,10 +600,63 @@ type UpdateTrackerRequest struct {
 	PermPublisherAllowView     bool          `json:"perm_publisher_allow_view,omitempty"`
 	ClickURLCustomParams       []interface{} `json:"click_url_custom_params,omitempty"`
 	S2SDestination             interface{}   `json:"s2s_destination,omitempty"`
-	VerificationRules          interface{}   `json:"verification_rules,omitempty"`
-	TierID                     string        `json:"tier_id,omitempty"`
-	CampaignID                 string        `json:"campaign_id,omitempty"`
-	DestinationData            struct {
+	VerificationRules          struct {
+		Rule struct {
+			CityIn                      []interface{} `json:"city_in"`
+			CityNotIn                   []interface{} `json:"city_not_in"`
+			DmaIn                       []interface{} `json:"dma_in"`
+			DmaNotIn                    []interface{} `json:"dma_not_in"`
+			PostalIn                    []interface{} `json:"postal_in"`
+			PostalNotIn                 []interface{} `json:"postal_not_in"`
+			StateIn                     []interface{} `json:"state_in"`
+			StateNotIn                  []interface{} `json:"state_not_in"`
+			CountryIn                   []interface{} `json:"country_in"`
+			CountryNotIn                []interface{} `json:"country_not_in"`
+			DeviceTypeIn                []interface{} `json:"device_type_in"`
+			DeviceTypeNotIn             []interface{} `json:"device_type_not_in"`
+			DeviceVersionIn             []interface{} `json:"device_version_in"`
+			DeviceVersionNotIn          []interface{} `json:"device_version_not_in"`
+			OsVersionIn                 []interface{} `json:"os_version_in"`
+			OsVersionNotIn              []interface{} `json:"os_version_not_in"`
+			OsVersionGreaterThan        []interface{} `json:"os_version_greater_than"`
+			OsVersionLessThan           []interface{} `json:"os_version_less_than"`
+			PlatformIn                  []interface{} `json:"platform_in"`
+			PlatformNotIn               []interface{} `json:"platform_not_in"`
+			BlacklistDevice             bool          `json:"blacklist_device"`
+			BlacklistIP                 bool          `json:"blacklist_ip"`
+			BlacklistSite               bool          `json:"blacklist_site"`
+			FrequencyCapClick           interface{}   `json:"frequency_cap_click"`
+			FrequencyCapMinutes         interface{}   `json:"frequency_cap_minutes"`
+			FrequencyCapImp             interface{}   `json:"frequency_cap_imp"`
+			FrequencyCapClickDefinition []interface{} `json:"frequency_cap_click_definition"`
+			FrequencyCapImpDefinition   []interface{} `json:"frequency_cap_imp_definition"`
+			DeviceLanguageIn            []interface{} `json:"device_language_in"`
+			DeviceLanguageNotIn         []interface{} `json:"device_language_not_in"`
+			UtmSourceMatchRequired      bool          `json:"utm_source_match_required"`
+			UtmSourceMatchForbidden     bool          `json:"utm_source_match_forbidden"`
+			ReferrerClickTimeRequired   bool          `json:"referrer_click_time_required"`
+			MinimumTimeToInstall        int           `json:"minimum_time_to_install"`
+			ReceiptStatusIn             []string      `json:"receipt_status_in"`
+			ValidTrafficDateEnabled     bool          `json:"valid_traffic_date_enabled"`
+			ValidTrafficDateStart       int           `json:"valid_traffic_date_start"`
+			ValidTrafficDateEnd         int           `json:"valid_traffic_date_end"`
+			FrequencyCapRules           struct {
+			} `json:"frequency_cap_rules"`
+			Meta struct {
+				DeviceTypeHumanReadable []interface{} `json:"device_type_human_readable"`
+				OsVersionHumanReadable  []interface{} `json:"os_version_human_readable"`
+			} `json:"meta"`
+		} `json:"rule"`
+		FailAction struct {
+			AppendParam     bool `json:"append_param"`
+			DeliverPostback bool `json:"deliver_postback"`
+			Reconcile       bool `json:"reconcile"`
+		} `json:"fail_action"`
+		Enabled bool `json:"enabled"`
+	} `json:"verification_rules,omitempty"`
+	TierID          string `json:"tier_id,omitempty"`
+	CampaignID      string `json:"campaign_id,omitempty"`
+	DestinationData struct {
 		Type    string `json:"type,omitempty"`
 		TypeObj string `json:"typeObj,omitempty"`
 	} `json:"destination_data,omitempty"`
