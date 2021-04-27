@@ -62,14 +62,14 @@ func (c ClientFake) GetSegment(campaignID, segmentID string) (Segment, error) {
 // GetTrackers API provides the ability to retrieve the entire list of trackers for the
 // numerical App ID provided in the URL.
 func (c ClientFake) GetTrackers(query string) ([]Tracker, error) {
-	return []Tracker{{}, {}}, nil
+	return []Tracker{{}, {}, {}, {}, {}}, nil
 }
 
 // UpdateTracker API is used to update an existing tracker by providing a JSON definition
 // of the tracker with modifications. If the tracker is successfully updated an
 // HTTP 200 code and response, as shown below, is returned.
 func (c ClientFake) UpdateTracker(updates Tracker) (Tracker, error) {
-	fmt.Printf("%#v", updates)
+	fmt.Printf("%#v\n\n", updates)
 	return Tracker{}, nil
 }
 
