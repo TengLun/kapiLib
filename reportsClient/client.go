@@ -1,3 +1,4 @@
+// Package reportsclient provides methods for accessing the reporting API from Kochava
 package reportsclient
 
 import (
